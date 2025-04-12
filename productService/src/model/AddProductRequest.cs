@@ -1,0 +1,1 @@
+public record AddProductRequest(string productName, string? productDescription);

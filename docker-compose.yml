@@ -1,0 +1,41 @@
+services:
+
+  userDb:
+    image: mcr.microsoft.com/mssql/server:2019-latest,
+    environment:
+      SA_PASSWORD: user@123
+      ACCEPT_EULA: Y
+    container_name: userDb
+    ports: 1434:1433
+    networks:
+      - backend
+
+  userService:
+    build:
+      context: ./userService
+    container_name: userService
+    ports: 5001:80
+    networks:
+      - backend
+
+  productDb:
+    image: mcr.microsoft.com/mssql/server:2019-latest,
+    environment:
+      SA_PASSWORD: product@123
+      ACCEPT_EULA: Y
+    container_name: productDb
+    ports: 1435:1433
+    networks:
+      - backend
+
+  productService:
+    build:
+      context: ./productService
+    container_name: productService
+    ports: 5002:80
+    networks:
+      - backend
+
+  networks:
+    backend:
+      driver: bridge

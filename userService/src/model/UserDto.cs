@@ -1,0 +1,1 @@
+public record UserDto(Guid id, string userName);

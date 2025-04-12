@@ -1,0 +1,1 @@
+public record RegisterRequest(string firstName, string lastName, string userEmail, string password, DateTime bornDate);
