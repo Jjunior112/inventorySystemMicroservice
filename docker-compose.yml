@@ -36,6 +36,24 @@ services:
     networks:
       - backend
 
+  operationsDb:
+    image: mcr.microsoft.com/mssql/server:2019-latest,
+    environment:
+      SA_PASSWORD: operations@123
+      ACCEPT_EULA: Y
+    container_name: operationsDb
+    ports: 1436:1433
+    networks:
+      - backend
+
+  operationsService:
+    build:
+      context: ./operationsService
+    container_name: operationsService
+    ports: 5002:80
+    networks:
+      - backend
+
   networks:
     backend:
       driver: bridge
