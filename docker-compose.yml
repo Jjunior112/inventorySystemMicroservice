@@ -1,59 +1,74 @@
 services:
 
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    networks:
+      - backend
+
   userDb:
-    image: mcr.microsoft.com/mssql/server:2019-latest,
+    image: mcr.microsoft.com/mssql/server:2019-latest
     environment:
       SA_PASSWORD: user@123
       ACCEPT_EULA: Y
     container_name: userDb
-    ports: 1434:1433
+    ports:
+      - "1434:1433"
     networks:
       - backend
 
-  userService:
+  userservice:
     build:
-      context: ./userService
+      context: ./userservice
     container_name: userService
-    ports: 5001:80
+    ports: 
+      - "5001:80"
     networks:
       - backend
 
   productDb:
-    image: mcr.microsoft.com/mssql/server:2019-latest,
+    image: mcr.microsoft.com/mssql/server:2019-latest
     environment:
       SA_PASSWORD: product@123
       ACCEPT_EULA: Y
     container_name: productDb
-    ports: 1435:1433
+    ports:
+      - "1435:1433"
     networks:
       - backend
 
-  productService:
+  productservice:
     build:
       context: ./productService
-    container_name: productService
-    ports: 5002:80
+    container_name: productservice
+    ports: 
+      - "5002:80"
     networks:
       - backend
 
   operationsDb:
-    image: mcr.microsoft.com/mssql/server:2019-latest,
+    image: mcr.microsoft.com/mssql/server:2019-latest
     environment:
       SA_PASSWORD: operations@123
       ACCEPT_EULA: Y
     container_name: operationsDb
-    ports: 1436:1433
+    ports:
+      - "1436:1433"
     networks:
       - backend
 
-  operationsService:
+  operationsservice:
     build:
-      context: ./operationsService
-    container_name: operationsService
-    ports: 5002:80
+      context: ./operationService
+    container_name: operationsservice
+    ports: 
+      - "5003:80"
     networks:
       - backend
 
-  networks:
-    backend:
-      driver: bridge
+networks:
+  backend:
+    driver: bridge
