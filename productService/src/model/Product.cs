@@ -4,15 +4,17 @@ public class Product
 
     public string ProductName { get; set; }
 
-    public string? ProductDescription { get; set; }
+    public string ProductCategory { get; set; }
 
-    public int ProductQuantity { get; set; }
+    public DateTime CreatedAt { get; set; }
 
-    public Product(string productName, string? productDescription)
+    public Product(string productName, string productCategory)
     {
         ProductId = Guid.NewGuid();
         ProductName = productName;
-        ProductDescription = productDescription;
-        ProductQuantity = 0;
+        ProductCategory = productCategory;
+        CreatedAt = DateTime.Now;
+
     }
+
 }

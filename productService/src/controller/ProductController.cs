@@ -1,4 +1,6 @@
+using MassTransit.Transports;
 using Microsoft.AspNetCore.Mvc;
+using Contracts.Events;
 
 
 [ApiController]
@@ -7,10 +9,12 @@ public class ProductController : ControllerBase
 {
 
     private readonly ProductService _productService;
+    private readonly PublishEndpoint _publishEndPoint;
 
-    public ProductController(ProductService productService)
+    public ProductController(ProductService productService, PublishEndpoint publishEndPoint)
     {
         _productService = productService;
+        _publishEndPoint = publishEndPoint;
     }
 
     [HttpGet]
@@ -29,9 +33,11 @@ public class ProductController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> AddProduct(AddProductRequest request)
     {
-        var product = new Product(request.productName, request.productDescription);
+        var product = new Product(request.productName, request.productCategory);
 
         await _productService.AddProducts(product);
+
+
 
         return CreatedAtAction(nameof(GetProductById), new { id = product.ProductId }, product);
 

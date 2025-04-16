@@ -1,1 +1,1 @@
-public record AddProductRequest(string productName, string? productDescription);
+public record AddProductRequest(string productName, string productCategory);

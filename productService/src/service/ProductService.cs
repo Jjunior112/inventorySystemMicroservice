@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 
 public class ProductService
 {
+
     private readonly ProductDbContext _context;
 
     public ProductService(ProductDbContext context)
@@ -26,8 +27,8 @@ public class ProductService
 
         if (product == null) return null;
 
-        product.ProductDescription = request.productName;
-        product.ProductDescription = request.productDescription;
+        product.ProductName = request.productName;
+        product.ProductCategory = request.productCategory;
 
         _context.Update(product);
 
@@ -50,7 +51,5 @@ public class ProductService
         return true;
 
     }
-
-
 
 }

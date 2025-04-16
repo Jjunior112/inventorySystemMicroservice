@@ -44,7 +44,6 @@ public class OperationController : ControllerBase
 
         ));
 
-
         return CreatedAtAction(nameof(GetOperationsById), new { id = operation.OperationId }, operation);
     }
 

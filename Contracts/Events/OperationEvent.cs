@@ -1,14 +1,15 @@
-namespace Contracts.Events;
-
-public class OperationEvent
+namespace Contracts.Events
 {
-    public Guid ProductId { get; set; }
-    public int Quantity { get; set; }
-
-    public OperationEvent(Guid productId, int quantity)
+    public class OperationEvent
     {
-        ProductId = productId;
-        Quantity = quantity;
+        public Guid ProductId { get; set; }
+        public int Quantity { get; set; }
 
+        public OperationEvent(Guid productId, int quantity)
+        {
+            ProductId = productId;
+            Quantity = quantity;
+
+        }
     }
 }
