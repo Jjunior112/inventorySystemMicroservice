@@ -1,6 +1,7 @@
 using MassTransit.Transports;
 using Microsoft.AspNetCore.Mvc;
 using Contracts.Events;
+using MassTransit;
 
 
 [ApiController]
@@ -9,9 +10,9 @@ public class ProductController : ControllerBase
 {
 
     private readonly ProductService _productService;
-    private readonly PublishEndpoint _publishEndPoint;
+    private readonly IPublishEndpoint _publishEndPoint;
 
-    public ProductController(ProductService productService, PublishEndpoint publishEndPoint)
+    public ProductController(ProductService productService, IPublishEndpoint publishEndPoint)
     {
         _productService = productService;
         _publishEndPoint = publishEndPoint;
@@ -37,7 +38,13 @@ public class ProductController : ControllerBase
 
         await _productService.AddProducts(product);
 
-
+        await _publishEndPoint.Publish<IProductCreated>(new
+        {
+            product.ProductId,
+            product.ProductName,
+            product.ProductCategory,
+            product.CreatedAt
+        }, CancellationToken.None);
 
         return CreatedAtAction(nameof(GetProductById), new { id = product.ProductId }, product);
 

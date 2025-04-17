@@ -24,7 +24,7 @@ services:
     build:
       context: ./userservice
     container_name: userService
-    ports: 
+    ports:
       - "5001:80"
     networks:
       - backend
@@ -44,7 +44,7 @@ services:
     build:
       context: ./productService
     container_name: productservice
-    ports: 
+    ports:
       - "5002:80"
     networks:
       - backend
@@ -64,7 +64,15 @@ services:
     build:
       context: ./operationService
     container_name: operationsservice
-    ports: 
+    ports:
+      - "5003:80"
+    networks:
+      - backend
+  stockservice:
+    build:
+      context: ./operationService
+    container_name: stockservice
+    ports:
       - "5003:80"
     networks:
       - backend

@@ -1,3 +1,5 @@
+namespace Contracts.Enums;
+
 public enum OperationType
 {
     StockOut = 0,

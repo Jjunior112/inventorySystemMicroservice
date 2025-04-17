@@ -1,0 +1,1 @@
+public record AddStockRequest(Guid productId, string productName, string productCategory, DateTime createdAt);

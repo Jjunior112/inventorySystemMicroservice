@@ -1,0 +1,1 @@
+public record UpdateStockRequest(int operationType, int productQuantity);

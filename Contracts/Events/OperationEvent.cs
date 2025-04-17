@@ -1,15 +1,15 @@
+using Contracts.Enums;
+
 namespace Contracts.Events
 {
-    public class OperationEvent
+    public interface IOperationCreated
     {
-        public Guid ProductId { get; set; }
-        public int Quantity { get; set; }
+        Guid ProductId { get; }
 
-        public OperationEvent(Guid productId, int quantity)
-        {
-            ProductId = productId;
-            Quantity = quantity;
+        OperationType OperationType { get; }
 
-        }
+        int Quantity { get; }
+
+
     }
 }

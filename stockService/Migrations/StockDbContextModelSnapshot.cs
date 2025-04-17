@@ -7,10 +7,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace operationService.Migrations
+namespace stockService.Migrations
 {
-    [DbContext(typeof(OperationDbContext))]
-    partial class OperationDbContextModelSnapshot : ModelSnapshot
+    [DbContext(typeof(StockDbContext))]
+    partial class StockDbContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
@@ -21,27 +21,32 @@ namespace operationService.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("Operation", b =>
+            modelBuilder.Entity("Stock", b =>
                 {
-                    b.Property<Guid>("OperationId")
+                    b.Property<Guid>("StockId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTime>("OperationAt")
+                    b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("OperationQuantity")
-                        .HasColumnType("int");
-
-                    b.Property<int>("OperationType")
-                        .HasColumnType("int");
+                    b.Property<string>("ProductCategory")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid>("ProductId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.HasKey("OperationId");
+                    b.Property<string>("ProductName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
-                    b.ToTable("Operations");
+                    b.Property<int>("ProductQuantity")
+                        .HasColumnType("int");
+
+                    b.HasKey("StockId");
+
+                    b.ToTable("Stocks");
                 });
 #pragma warning restore 612, 618
         }

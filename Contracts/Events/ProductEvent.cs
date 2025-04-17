@@ -4,7 +4,8 @@ namespace Contracts.Events
     {
         Guid ProductId { get; }
         string ProductName { get; }
-        string ProductDescription { get; }
-        int ProductQuantity {get;}
+        string ProductCategory { get; }
+
+        DateTime CreatedAt { get; }
     }
 }

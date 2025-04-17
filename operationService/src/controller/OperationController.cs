@@ -37,12 +37,17 @@ public class OperationController : ControllerBase
     {
         var operation = new Operation(request.productId, request.productQuantity, request.operationType);
 
+
+        await _publishEndPoint.Publish<IOperationCreated>(new
+        {
+            ProductId = request.productId,
+            OperationType = request.operationType,
+            Quantity = request.productQuantity
+        },
+        CancellationToken.None
+        );
+
         await _operationService.AddOperation(operation);
-
-        await _publishEndPoint.Publish(new OperationEvent(
-            request.productId, request.productQuantity
-
-        ));
 
         return CreatedAtAction(nameof(GetOperationsById), new { id = operation.OperationId }, operation);
     }
