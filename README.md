@@ -99,7 +99,7 @@ http://localhost:8000
 | API Gateway       | 9000         | Encaminhamento de requisições    |
 
 > Todos os endpoints devem ser acessados via Gateway (`localhost:9000`) após configuração do `ocelot.json`.
-
+> As portas padrões podem ser alteradas no arquivo .env
 ---
 
 ## 📌 Próximos Passos
