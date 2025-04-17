@@ -106,6 +106,8 @@ http://localhost:8000
 
 - Integração com AuthService (JWT)
 - Documentação com Swagger
+- Serviço de reserva
+- Serviço de confirmação de reserva
 ---
 
 ## 📄 Licença
