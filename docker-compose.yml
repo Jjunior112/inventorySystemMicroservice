@@ -1,8 +1,12 @@
+version: '3.8'
+
 services:
 
   rabbitmq:
     image: rabbitmq:3-management
-    container_name: rabbitmq
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS}
     ports:
       - "5672:5672"
       - "15672:15672"
@@ -12,11 +16,10 @@ services:
   userDb:
     image: mcr.microsoft.com/mssql/server:2019-latest
     environment:
-      SA_PASSWORD: user@123
+      SA_PASSWORD: ${SA_PASSWORD_USER}
       ACCEPT_EULA: Y
-    container_name: userDb
     ports:
-      - "1434:1433"
+      - "${USER_DB_PORT}:1433"
     networks:
       - backend
 
@@ -25,18 +28,20 @@ services:
       context: ./userservice
     container_name: userService
     ports:
-      - "5001:80"
+      - "${USER_SERVICE_PORT}:80"
     networks:
       - backend
+    depends_on:
+      - userDb
+      - rabbitmq
 
   productDb:
     image: mcr.microsoft.com/mssql/server:2019-latest
     environment:
-      SA_PASSWORD: product@123
+      SA_PASSWORD: ${SA_PASSWORD_PRODUCT}
       ACCEPT_EULA: Y
-    container_name: productDb
     ports:
-      - "1435:1433"
+      - "${PRODUCT_DB_PORT}:1433"
     networks:
       - backend
 
@@ -45,18 +50,21 @@ services:
       context: ./productService
     container_name: productservice
     ports:
-      - "5002:80"
+      - "${PRODUCT_SERVICE_PORT}:80"
     networks:
       - backend
+    depends_on:
+      - productDb
+      - rabbitmq
 
   operationsDb:
     image: mcr.microsoft.com/mssql/server:2019-latest
     environment:
-      SA_PASSWORD: operations@123
+      SA_PASSWORD: ${SA_PASSWORD_OPERATIONS}
       ACCEPT_EULA: Y
     container_name: operationsDb
     ports:
-      - "1436:1433"
+      - "${OPERATIONS_DB_PORT}:1433"
     networks:
       - backend
 
@@ -65,15 +73,47 @@ services:
       context: ./operationService
     container_name: operationsservice
     ports:
-      - "5003:80"
+      - "${OPERATIONS_SERVICE_PORT}:80"
     networks:
       - backend
+    depends_on:
+      - operationsDb
+      - rabbitmq
+
+  stockDb:
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    environment:
+      SA_PASSWORD: ${SA_PASSWORD_STOCK}
+      ACCEPT_EULA: Y
+    container_name: stockDb
+    ports:
+      - "${STOCK_DB_PORT}:1433"
+    networks:
+      - backend
+
   stockservice:
     build:
-      context: ./operationService
+      context: ./stockService
     container_name: stockservice
     ports:
-      - "5003:80"
+      - "${STOCK_SERVICE_PORT}:80"
+    networks:
+      - backend
+    depends_on:
+      - stockDb
+      - rabbitmq
+
+  apigateway:
+    build:
+      context: ./apiGateway
+    container_name: apigateway
+    ports:
+      - "9000:80"
+    depends_on:
+      - userservice
+      - productservice
+      - operationsservice
+      - stockservice
     networks:
       - backend
 

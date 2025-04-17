@@ -4,8 +4,6 @@ WORKDIR /App
 
 COPY . .
 
-COPY ../Contracts ./Contracts
-
 RUN dotnet restore
 
 RUN dotnet publish -o out
@@ -18,4 +16,4 @@ COPY --from=build /App/out .
 
 EXPOSE 8080
 
-ENTRYPOINT [ "dotnet", "operationService.dll" ]
+ENTRYPOINT [ "dotnet","apiGateway.dll" ]
