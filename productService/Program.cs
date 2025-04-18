@@ -15,7 +15,7 @@ builder.Services.AddMassTransit(x =>
 {
     x.UsingRabbitMq((ctx, cfg) =>
     {
-        cfg.Host(new Uri("amqp://localhost:5672"), host =>
+        cfg.Host(new Uri("amqp://rabbitmq:5672"), host =>
         {
             host.Username("guest");
             host.Password("guest");
@@ -26,7 +26,7 @@ builder.Services.AddMassTransit(x =>
 builder.Services.AddDbContext<ProductDbContext>(options =>
 {
     var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-    options.UseSqlServer(connectionString);
+    options.UseSqlServer(connectionString,sql => sql.EnableRetryOnFailure());
     options.LogTo(Console.WriteLine, LogLevel.Information);
 });
 
@@ -36,6 +36,12 @@ builder.Services.AddControllers();
 
 
 var app = builder.Build();
+
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<ProductDbContext>();
+    db.Database.Migrate(); 
+}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
