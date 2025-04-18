@@ -1,1 +1,0 @@
-public record LoginRequest(string userAccess, string password);

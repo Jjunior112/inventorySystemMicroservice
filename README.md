@@ -21,12 +21,6 @@ InventorySystem/
 │
 ├── docker-compose.yml               # Orquestração de todos os serviços
 │
-├── UserService/                     # Serviço de usuários
-│   ├── model/User.cs
-│   ├── data/UserDbContext.cs
-│   ├── service/UserServices.cs
-│   ├── controller/UserController.cs
-│   └── Dockerfile
 │
 ├── ProductService/                  # Serviço de produtos
 │   ├── model/Product.cs
@@ -83,7 +77,7 @@ docker-compose up --build
 3. Acesse o API Gateway em:
 
 ```
-http://localhost:8000
+http://localhost:9000
 ```
 
 ---
@@ -92,13 +86,12 @@ http://localhost:8000
 
 | Serviço           | Porta Padrão | Descrição                         |
 |-------------------|--------------|-----------------------------------|
-| UserService       | 5001         | Gerenciamento de usuários         |
 | ProductService    | 5002         | Cadastro e listagem de produtos  |
 | OperationService  | 5003         | Operações de entrada/saída       |
 | StockService      | 5004         | Controle de estoque              |
 | API Gateway       | 8000         | Encaminhamento de requisições    |
 
-> Todos os endpoints devem ser acessados via Gateway (`localhost:8000`) após configuração do `ocelot.json`.
+> Todos os endpoints devem ser acessados via Gateway (`localhost:9000`) após configuração do `ocelot.json`.
 
 ---
 
