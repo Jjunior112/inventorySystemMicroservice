@@ -18,7 +18,7 @@ builder.Services.AddScoped<StockService>();
 builder.Services.AddDbContext<StockDbContext>(options =>
 {
     var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-    options.UseSqlServer(connectionString);
+    options.UseSqlServer(connectionString, sql => sql.EnableRetryOnFailure());
     options.LogTo(Console.WriteLine, LogLevel.Information);
 });
 
@@ -29,16 +29,16 @@ builder.Services.AddMassTransit(x =>
 
     x.UsingRabbitMq((context, cfg) =>
     {
-        cfg.Host(new Uri("amqp://localhost:5672"), host =>
+        cfg.Host(new Uri("amqp://rabbitmq:5672"), host =>
         {
             host.Username("guest");
             host.Password("guest");
         });
 
-            cfg.ReceiveEndpoint("product-created-queue", e =>
-        {
-            e.ConfigureConsumer<ProductCreatedConsumer>(context);
-        });
+        cfg.ReceiveEndpoint("product-created-queue", e =>
+    {
+        e.ConfigureConsumer<ProductCreatedConsumer>(context);
+    });
 
         cfg.ReceiveEndpoint("operation-created-queue", e =>
         {
@@ -50,6 +50,12 @@ builder.Services.AddMassTransit(x =>
 
 
 var app = builder.Build();
+
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<StockDbContext>();
+    db.Database.Migrate(); 
+}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

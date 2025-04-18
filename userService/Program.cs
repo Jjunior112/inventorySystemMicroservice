@@ -19,7 +19,8 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<UserDbContext>(Options =>
 {
     var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-    Options.UseSqlServer(connectionString);
+    Options.UseSqlServer(connectionString, sql => sql.EnableRetryOnFailure());
+
     Options.LogTo(Console.WriteLine, LogLevel.Information);
 });
 
@@ -49,6 +50,12 @@ builder.Services.AddAuthorization();
 
 
 var app = builder.Build();
+
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<UserDbContext>();
+    db.Database.Migrate();
+}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

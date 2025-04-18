@@ -5,7 +5,7 @@ using MassTransit;
 
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/products")]
 public class ProductController : ControllerBase
 {
 

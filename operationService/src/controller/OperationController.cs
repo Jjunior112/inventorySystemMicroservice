@@ -5,7 +5,7 @@ using Contracts.Events;
 
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/operations")]
 public class OperationController : ControllerBase
 {
     private readonly OperationService _operationService;

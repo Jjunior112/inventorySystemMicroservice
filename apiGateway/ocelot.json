@@ -4,7 +4,7 @@
         "DownstreamPathTemplate": "/api/users/{everything}",
         "DownstreamScheme": "http",
         "DownstreamHostAndPorts": [
-          { "Host": "userservice", "Port": 80 }
+          { "Host": "userservice", "Port": 8080 }
         ],
         "UpstreamPathTemplate": "/users/{everything}",
         "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ]
@@ -13,7 +13,7 @@
         "DownstreamPathTemplate": "/api/products/{everything}",
         "DownstreamScheme": "http",
         "DownstreamHostAndPorts": [
-          { "Host": "productservice", "Port": 80 }
+          { "Host": "productservice", "Port": 8080 }
         ],
         "UpstreamPathTemplate": "/products/{everything}",
         "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ]
@@ -22,7 +22,7 @@
         "DownstreamPathTemplate": "/api/operations/{everything}",
         "DownstreamScheme": "http",
         "DownstreamHostAndPorts": [
-          { "Host": "operationsservice", "Port": 80 }
+          { "Host": "operationsservice", "Port": 8080 }
         ],
         "UpstreamPathTemplate": "/operations/{everything}",
         "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ]
@@ -31,7 +31,7 @@
         "DownstreamPathTemplate": "/api/stocks/{everything}",
         "DownstreamScheme": "http",
         "DownstreamHostAndPorts": [
-          { "Host": "stockservice", "Port": 80 }
+          { "Host": "stocksservice", "Port": 8080 }
         ],
         "UpstreamPathTemplate": "/stocks/{everything}",
         "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ]
