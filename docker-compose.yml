@@ -87,7 +87,9 @@ services:
       context: ./apiGateway
     container_name: apigateway
     ports:
+
       - "${API_GATEWAY_PORT}:8080"
+
     depends_on:
       - productservice
       - operationsservice
