@@ -96,16 +96,18 @@ http://localhost:8000
 | ProductService    | 5002         | Cadastro e listagem de produtos  |
 | OperationService  | 5003         | Operações de entrada/saída       |
 | StockService      | 5004         | Controle de estoque              |
-| API Gateway       | 8000         | Encaminhamento de requisições    |
+| API Gateway       | 9000         | Encaminhamento de requisições    |
 
-> Todos os endpoints devem ser acessados via Gateway (`localhost:8000`) após configuração do `ocelot.json`.
-
+> Todos os endpoints devem ser acessados via Gateway (`localhost:9000`) após configuração do `ocelot.json`.
+> As portas padrões podem ser alteradas no arquivo .env
 ---
 
 ## 📌 Próximos Passos
 
 - Integração com AuthService (JWT)
 - Documentação com Swagger
+- Serviço de reserva
+- Serviço de confirmação de reserva
 ---
 
 ## 📄 Licença
