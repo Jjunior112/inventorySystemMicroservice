@@ -27,7 +27,7 @@ builder.Services.AddDbContext<OperationDbContext>(options =>
 {
 
     var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-    options.UseSqlServer(connectionString,sql => sql.EnableRetryOnFailure());
+    options.UseSqlServer(connectionString);
     options.LogTo(Console.WriteLine, LogLevel.Information);
 
 });

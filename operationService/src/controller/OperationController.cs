@@ -2,8 +2,6 @@ using MassTransit;
 using Microsoft.AspNetCore.Mvc;
 using Contracts.Events;
 
-
-
 [ApiController]
 [Route("api/operations")]
 public class OperationController : ControllerBase
@@ -35,14 +33,15 @@ public class OperationController : ControllerBase
 
     public async Task<IActionResult> AddOperation([FromBody] OperationRequest request)
     {
-        var operation = new Operation(request.productId, request.productQuantity, request.operationType);
+
+        var operation = new Operation(request.productId, request.operationQuantity, request.operationType);
 
 
         await _publishEndPoint.Publish<IOperationCreated>(new
         {
             ProductId = request.productId,
             OperationType = request.operationType,
-            Quantity = request.productQuantity
+            Quantity = request.operationQuantity
         },
         CancellationToken.None
         );
@@ -50,6 +49,7 @@ public class OperationController : ControllerBase
         await _operationService.AddOperation(operation);
 
         return CreatedAtAction(nameof(GetOperationsById), new { id = operation.OperationId }, operation);
+
     }
 
 

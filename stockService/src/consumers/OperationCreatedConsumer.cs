@@ -18,6 +18,7 @@ public class OperationCreatedConsumer : IConsumer<IOperationCreated>
 
         await _stockService.UpdateStock(message.ProductId, message.OperationType, message.Quantity);
 
+
     }
 
 }

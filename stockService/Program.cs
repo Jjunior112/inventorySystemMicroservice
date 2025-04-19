@@ -18,7 +18,7 @@ builder.Services.AddScoped<StockService>();
 builder.Services.AddDbContext<StockDbContext>(options =>
 {
     var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-    options.UseSqlServer(connectionString, sql => sql.EnableRetryOnFailure());
+    options.UseSqlServer(connectionString);
     options.LogTo(Console.WriteLine, LogLevel.Information);
 });
 
