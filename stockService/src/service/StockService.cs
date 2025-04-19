@@ -35,6 +35,12 @@ public class StockService
         switch (operationType)
         {
             case OperationType.StockOut:
+
+                if (productQuantity <= 0)
+                {
+                    return null;
+                }
+
                 if (productQuantity <= stock.ProductQuantity)
                 {
                     stock.ProductQuantity -= productQuantity;
@@ -47,6 +53,10 @@ public class StockService
                 break;
 
             case OperationType.StockIn:
+                if (productQuantity <= 0)
+                {
+                    return null;
+                }
                 stock.ProductQuantity += productQuantity;
                 break;
         }
