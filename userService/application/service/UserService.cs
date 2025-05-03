@@ -14,9 +14,10 @@ public class UserService : IUserService
 
     public async Task<User?> GetUserByIdAsync(Guid id) => await _userRepository.GetUserByIdAsync(id);
 
-
+    
     public async Task<User> CreateUser(User user)
     {
+        
         await _userRepository.CreateUser(user);
 
         await _userContext.SaveChangesAsync();

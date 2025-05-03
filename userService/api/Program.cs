@@ -16,7 +16,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddDbContext<UserDbContext>(options =>
 {
 
-    var connectionString = builder.Configuration.GetConnectionString("DefaultConnection1");
+    var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
     options.UseSqlServer(connectionString);
 

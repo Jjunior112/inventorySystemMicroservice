@@ -5,9 +5,9 @@ using Microsoft.AspNetCore.Mvc;
 [Route("api/users")]
 public class UserController : ControllerBase
 {
-    private readonly UserService _userService;
+    private readonly IUserService _userService;
 
-    public UserController(UserService userService)
+    public UserController(IUserService userService)
     {
         _userService = userService;
     }
@@ -23,23 +23,30 @@ public class UserController : ControllerBase
 
         if (user == null) return NotFound();
 
-        return Ok(user);
+        return Ok(new UserDto(user.UserName,user.UserEmail));
     }
 
     [HttpPost]
 
     public async Task<IActionResult> CreateUser(AddUserRequest request)
     {
+
+
+
         var user = new User(request.firstName, request.lastName, request.userEmail, request.userPassword);
+
+        var hashedPassword = BCrypt.Net.BCrypt.HashPassword(user.UserPassword);
+
+        user.UserPassword = hashedPassword;
 
         var confirmUser = await _userService.CreateUser(user);
 
         if (confirmUser == null) return BadRequest();
 
-        return CreatedAtAction(nameof(GetUserById), new { id = confirmUser.UserId }, confirmUser);
+        return CreatedAtAction(nameof(GetUserById), new { id = confirmUser.UserId }, new UserDto(confirmUser.UserName,confirmUser.UserEmail));
 
     }
-    [HttpDelete]
+    [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteUser(Guid id)
     {
         var user = await _userService.DeleteUser(id);

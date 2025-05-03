@@ -16,7 +16,7 @@ public class User
     public string UserPassword { get; set; }
 
 
-    public ICollection<IdentityUserRole<string>> UserRoles { get; set; }
+    
 
     public User(string firstName, string lastName, string userEmail, string userPassword)
     {
@@ -32,7 +32,6 @@ public class User
         if (string.IsNullOrEmpty(userPassword)) throw new ArgumentException("Password cannot be null or empty.");
 
         UserId = Guid.NewGuid();
-        UserRoles = new List<IdentityUserRole<string>>();
         FirstName = firstName;
         LastName = lastName;
         UserName = CreateUserName(firstName, lastName);
