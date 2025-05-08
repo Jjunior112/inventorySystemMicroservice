@@ -64,7 +64,7 @@ InventorySystem/
 1. Clone o repositório:
 
 ```bash
-git clone [https://github.com/seu-usuario/inventory-system.git](https://github.com/Jjunior112/inventorySystemMicroservice)
+git clone https://github.com/Jjunior112/inventorySystemMicroservice
 cd inventorySystem
 ```
 
