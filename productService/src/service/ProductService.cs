@@ -10,7 +10,22 @@ public class ProductService
         _context = context;
     }
 
-    public async Task<List<Product>> GetProducts() => await _context.Products.ToListAsync();
+    public async Task<PagedResult> GetProducts(int pageNumber, int pageSize)
+    {
+
+        var totalCounts = await _context.Products.CountAsync();
+
+        var products = await _context.Products.Skip((pageNumber - 1) * pageSize).Take(pageSize).OrderBy(p => p.CreatedAt).ToListAsync();
+
+        return new PagedResult
+        {
+            Products = products,
+            TotalCounts = totalCounts,
+            Page = pageNumber,
+            PageSize = pageSize
+        };
+
+    }
 
     public async Task<Product?> GetProductById(Guid id) => await _context.Products.FindAsync(id);
 

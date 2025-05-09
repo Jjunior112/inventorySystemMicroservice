@@ -1,7 +1,7 @@
-using MassTransit.Transports;
 using Microsoft.AspNetCore.Mvc;
 using Contracts.Events;
 using MassTransit;
+
 
 
 [ApiController]
@@ -18,8 +18,13 @@ public class ProductController : ControllerBase
         _publishEndPoint = publishEndPoint;
     }
 
-    [HttpGet]
-    public async Task<IActionResult> GetProducts() => Ok(await _productService.GetProducts());
+    [HttpGet()]
+    public async Task<IActionResult> GetProducts([FromQuery] int pageNumber, [FromQuery] int pageSize)
+    {
+        var products = await _productService.GetProducts(pageNumber,pageSize);
+
+         return Ok(products);
+    }
 
     [HttpGet("{id}")]
     public async Task<IActionResult> GetProductById(Guid id)
