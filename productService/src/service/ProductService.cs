@@ -10,16 +10,16 @@ public class ProductService
         _context = context;
     }
 
-    public async Task<PagedResult> GetProducts(int pageNumber, int pageSize)
+    public async Task<PagedResult<Product>> GetProducts(int pageNumber, int pageSize)
     {
 
         var totalCounts = await _context.Products.CountAsync();
 
         var products = await _context.Products.Skip((pageNumber - 1) * pageSize).Take(pageSize).OrderBy(p => p.CreatedAt).ToListAsync();
 
-        return new PagedResult
+        return new PagedResult<Product>
         {
-            Products = products,
+            Items = products,
             TotalCounts = totalCounts,
             Page = pageNumber,
             PageSize = pageSize
