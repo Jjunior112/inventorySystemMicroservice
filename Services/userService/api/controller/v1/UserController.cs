@@ -1,3 +1,4 @@
+
 using Microsoft.AspNetCore.Mvc;
 
 
@@ -24,7 +25,7 @@ public class UserController : ControllerBase
 
         if (user == null) return NotFound();
 
-        return Ok(new UserDto(user.UserName,user.UserEmail));
+        return Ok(new UserDto(user.UserName, user.UserEmail));
     }
 
     [HttpPost]
@@ -44,7 +45,7 @@ public class UserController : ControllerBase
 
         if (confirmUser == null) return BadRequest();
 
-        return CreatedAtAction(nameof(GetUserById), new { id = confirmUser.UserId }, new UserDto(confirmUser.UserName,confirmUser.UserEmail));
+        return CreatedAtAction(nameof(GetUserById), new { id = confirmUser.UserId }, new UserDto(confirmUser.UserName, confirmUser.UserEmail));
 
     }
     [HttpDelete("{id}")]
