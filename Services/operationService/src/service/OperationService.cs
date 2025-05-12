@@ -20,9 +20,7 @@ public class OperationService
             Items = operations,
             Page = pageNumber,
             PageSize = pageSize
-
         };
-
 
     }
 

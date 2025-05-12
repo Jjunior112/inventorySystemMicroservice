@@ -2,8 +2,9 @@ using MassTransit;
 using Microsoft.AspNetCore.Mvc;
 using Contracts.Events;
 
+[ApiVersion("1.0")]
 [ApiController]
-[Route("api/operations")]
+[Route("api/v{version:apiVersion}/operations")]
 public class OperationController : ControllerBase
 {
     private readonly OperationService _operationService;

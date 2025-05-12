@@ -25,7 +25,7 @@ services:
 
   userservice:
     build:
-      context: ./userService
+      context: ./Services/userService
     container_name: userservice
     ports:
       - "${USER_SERVICE_PORT}:8080"
@@ -48,7 +48,7 @@ services:
 
   productservice:
     build:
-      context: ./productService
+      context: ./Services/productService
     container_name: productservice
     ports:
       - "${PRODUCT_SERVICE_PORT}:8080"
@@ -71,7 +71,7 @@ services:
 
   operationsservice:
     build:
-      context: ./operationService
+      context: ./Services/operationService
     container_name: operationsservice
     ports:
       - "${OPERATIONS_SERVICE_PORT}:8080"
@@ -94,7 +94,7 @@ services:
 
   stocksservice:
     build:
-      context: ./stockService
+      context: ./Services/stockService
     container_name: stocksservice
     ports:
       - "${STOCK_SERVICE_PORT}:8080"
@@ -106,7 +106,7 @@ services:
 
   apigateway:
     build:
-      context: ./apiGateway
+      context: ./Gateway/apiGateway
     container_name: apigateway
     ports:
 

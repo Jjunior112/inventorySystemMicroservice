@@ -4,8 +4,9 @@ using MassTransit;
 
 
 
+[ApiVersion("1.0")]
 [ApiController]
-[Route("api/products")]
+[Route("api/v{version:apiVersion}/products")]
 public class ProductController : ControllerBase
 {
 

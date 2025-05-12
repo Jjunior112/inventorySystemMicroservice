@@ -1,8 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
 
 
+[ApiVersion("1.0")]
 [ApiController]
-[Route("api/users")]
+[Route("api/v{version:apiVersion}/users")]
 public class UserController : ControllerBase
 {
     private readonly IUserService _userService;

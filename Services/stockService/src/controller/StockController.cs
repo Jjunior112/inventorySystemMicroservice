@@ -1,7 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
 
+[ApiVersion("1.0")]
 [ApiController]
-[Route("api/stocks")]
+[Route("api/v{version:apiVersion}/stocks")]
 public class StockController : ControllerBase
 {
     private readonly StockService _stockService;
