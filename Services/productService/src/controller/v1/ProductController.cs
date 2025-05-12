@@ -2,8 +2,6 @@ using Microsoft.AspNetCore.Mvc;
 using Contracts.Events;
 using MassTransit;
 
-
-
 [ApiVersion("1.0")]
 [ApiController]
 [Route("api/v{version:apiVersion}/products")]
@@ -22,9 +20,9 @@ public class ProductController : ControllerBase
     [HttpGet()]
     public async Task<IActionResult> GetProducts([FromQuery] int pageNumber, [FromQuery] int pageSize)
     {
-        var products = await _productService.GetProducts(pageNumber,pageSize);
+        var products = await _productService.GetProducts(pageNumber, pageSize);
 
-         return Ok(products);
+        return Ok(products);
     }
 
     [HttpGet("{id}")]

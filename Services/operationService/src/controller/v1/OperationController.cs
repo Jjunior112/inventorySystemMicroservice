@@ -1,3 +1,4 @@
+
 using MassTransit;
 using Microsoft.AspNetCore.Mvc;
 using Contracts.Events;
