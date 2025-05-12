@@ -9,7 +9,22 @@ public class OperationService
         _context = context;
     }
 
-    public async Task<List<Operation>> GetOperations() => await _context.Operations.ToListAsync();
+    public async Task<PagedResult<Operation>> GetOperations(int pageNumber, int pageSize)
+    {
+        var totalCounts = await _context.Operations.CountAsync();
+
+        var operations = await _context.Operations.Skip((pageNumber - 1) * pageSize).Take(pageSize).OrderBy(p => p.OperationAt).ToListAsync();
+
+        return new PagedResult<Operation>
+        {
+            Items = operations,
+            Page = pageNumber,
+            PageSize = pageSize
+
+        };
+
+
+    }
 
     public async Task<Operation?> GetOperationById(Guid id)
     {

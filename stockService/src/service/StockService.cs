@@ -11,7 +11,20 @@ public class StockService
         _context = context;
     }
 
-    public async Task<List<Stock>> GetStocks() => await _context.Stocks.ToListAsync();
+    public async Task<PagedResult<Stock>> GetStocks(int pageNumber, int pageSize)
+    {
+        var totalCounts = await _context.Stocks.CountAsync();
+
+        var stocks = await _context.Stocks.ToListAsync();
+
+        return new PagedResult<Stock>
+        {
+            Items = stocks,
+            Page = pageNumber,
+            PageSize = pageSize
+        };
+
+    }
 
     public async Task<Stock?> GetStockById(Guid id) => await _context.Stocks.FindAsync(id);
 

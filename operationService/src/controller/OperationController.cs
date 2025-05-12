@@ -17,7 +17,12 @@ public class OperationController : ControllerBase
 
     [HttpGet]
 
-    public async Task<IActionResult> GetOperations() => Ok(await _operationService.GetOperations());
+    public async Task<IActionResult> GetOperations([FromQuery] int pageNumber, [FromQuery] int pageSize)
+    {
+        var operations = await _operationService.GetOperations(pageNumber, pageSize);
+
+        return Ok(operations);
+    }
 
     [HttpGet("{id}")]
     public async Task<IActionResult> GetOperationsById(Guid id)
