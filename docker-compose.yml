@@ -12,6 +12,13 @@ services:
       - "15672:15672"
     networks:
       - backend
+  redis:
+    image: redis:7.2
+    container_name: redis
+    ports:
+      - "6379:6379"
+    networks:
+      - backend
   usersDb:
     image: mcr.microsoft.com/mssql/server:2019-latest
     environment:

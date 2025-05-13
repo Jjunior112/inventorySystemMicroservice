@@ -23,6 +23,15 @@ builder.Services.AddMassTransit(x =>
     });
 });
 
+builder.Services.AddScoped<ICachingService, RedisCachingService>();
+
+builder.Services.AddStackExchangeRedisCache(o => {
+    o.InstanceName = "instance";
+    o.Configuration = "redis:6379";
+});
+
+
+
 builder.Services.AddApiVersioning(options =>
 {
     options.ReportApiVersions = true;

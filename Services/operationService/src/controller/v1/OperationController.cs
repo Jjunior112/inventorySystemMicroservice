@@ -11,6 +11,7 @@ public class OperationController : ControllerBase
     private readonly OperationService _operationService;
     private readonly IPublishEndpoint _publishEndPoint;
 
+
     public OperationController(OperationService operationService, IPublishEndpoint publishEndpoint)
     {
         _operationService = operationService;
