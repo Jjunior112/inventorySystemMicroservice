@@ -1,6 +1,6 @@
 # 📦 Inventory System
 
-Sistema de inventário distribuído em microsserviços, implementado em .NET com API Gateway via Ocelot e orquestração de contêineres com Docker Compose.
+Sistema de inventário distribuído em microsserviços, implementado em .NET com API Gateway via Ocelot, orquestração de contêineres com Docker Compose, sistema de cache usando Redis e comunicação entre microsserviços usando RabbitMq.
 
 ---
 
@@ -9,6 +9,8 @@ Sistema de inventário distribuído em microsserviços, implementado em .NET com
 - [.NET 9](https://dotnet.microsoft.com/)
 - [Entity Framework Core](https://docs.microsoft.com/en-us/ef/core/)
 - [Ocelot API Gateway](https://ocelot.readthedocs.io/)
+- [RabbitMq](https://www.rabbitmq.com/)
+- [Redis](https://redis.io/)
 - [Docker](https://www.docker.com/)
 - [Docker Compose](https://docs.docker.com/compose/)
 
@@ -19,35 +21,55 @@ Sistema de inventário distribuído em microsserviços, implementado em .NET com
 ```plaintext
 InventorySystem/
 │
-├── docker-compose.yml               # Orquestração de todos os serviços
+├── docker-compose.yml               # Orquestração de todos os serviços, gateway e frontend
 │
-│
-├── ProductService/                  # Serviço de produtos
-│   ├── model/Product.cs
-│   ├── data/ProductDbContext.cs
-│   ├── service/ProductServices.cs
-│   ├── controller/ProductController.cs
-│   └── Dockerfile
-│
-├── OperationService/               # Serviço de operações (entradas/saídas)
-│   ├── model/Operation.cs
-│   ├── data/OperationDbContext.cs
-│   ├── service/OperationServices.cs
-│   ├── controller/OperationController.cs
-│   └── Dockerfile
-│
-├── StockService/                   # Serviço de controle de estoque
-│   ├── model/Stock.cs
-│   ├── data/StockDbContext.cs
-│   ├── service/StockServices.cs
-│   ├── controller/StockController.cs
-│   └── Dockerfile
-│
-└── ApiGateway/                     # Gateway central usando Ocelot
-    ├── program.cs
-    ├── appsettings.json
-    ├── ocelot.json
-    └── Dockerfile
+├── Contracts/                        # Camada de frontend da aplicação
+│        ├── Enums
+│        ├── Events
+│        └── Responses
+├── Frontend/                        # Camada de frontend da aplicação
+│  
+├── Gateway/ 
+│    └── ApiGateway/                     # Gateway central usando Ocelot
+│        ├── program.cs
+│        ├── appsettings.json
+│        ├── ocelot.json
+│        └── Dockerfile
+├── Services/ 
+│    ├── ProductService/                  # Serviço de produtos
+│       ├── model/Product.cs
+│       ├── data/ProductDbContext.cs
+│       ├── caching/
+│       	├── ICachingService.cs
+│       	├── RedisCachingService.cs
+│       ├── service/ProductServices.cs
+│       ├── controller/ProductController.cs
+│       └── Dockerfile
+│    
+│    ├── OperationService/               # Serviço de operações (entradas/saídas)
+│       ├── model/Operation.cs
+│       ├── data/OperationDbContext.cs
+│       ├── caching/
+│       	├── ICachingService.cs
+│       	├── RedisCachingService.cs
+│       ├── service/OperationServices.cs
+│       ├── controller/OperationController.cs
+│       └── Dockerfile
+│    
+│    ├── StockService/                   # Serviço de controle de estoque
+│       ├── consumers/
+│       	├── OperationCreatedConsumer.cs
+│       	├── ProductCreatedConsumer.cs
+│       ├── model/Stock.cs
+│       ├── data/StockDbContext.cs
+│       ├── caching/
+│       	├── ICachingService.cs
+│       	├── RedisCachingService.cs
+│       ├── service/StockServices.cs
+│       ├── controller/StockController.cs
+│       └── Dockerfile
+└──   
+
 ```
 
 ---
@@ -208,6 +230,20 @@ http://localhost:9000
         "productQuantity": 150
     }
     ```
+
+## 📨 Comunicação Assíncrona com RabbitMQ
+
+Este sistema utiliza o RabbitMQ para orquestrar eventos entre microsserviços. O MassTransit é usado como biblioteca de mensageria para publicar e consumir eventos.
+
+### Eventos Publicados:
+- `ProductCreatedEvent` pelo `ProductService`
+- `OperationCreatedEvent` pelo `OperationService`
+
+### Eventos Consumidos:
+- `ProductCreatedEvent` no `StockService`
+- `OperationCreatedEvent` no `StockService`
+
+RabbitMQ está configurado no `docker-compose.yml` e pode ser acessado em `http://localhost:15672` com login `guest` / `guest`.
 
 ---
 ## 📌 Próximos Passos
