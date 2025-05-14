@@ -8,19 +8,33 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
+
+//Swagger
 
 builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddScoped<ICachingService, RedisCachingService>();
+//DbContext
 
-builder.Services.AddStackExchangeRedisCache(o =>
+builder.Services.AddDbContext<ProductDbContext>(options =>
 {
-    o.InstanceName = "instance";
-    o.Configuration = "redis:6379";
+    var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+    options.UseSqlServer(connectionString);
+    options.LogTo(Console.WriteLine, LogLevel.Information);
 });
+
+//Versionamento
+
+builder.Services.AddApiVersioning(options =>
+{
+    options.ReportApiVersions = true;
+    options.AssumeDefaultVersionWhenUnspecified = true;
+    options.DefaultApiVersion = new ApiVersion(1, 0);
+    options.ApiVersionReader = new UrlSegmentApiVersionReader();
+});
+
+//Mass Transit
 
 builder.Services.AddMassTransit(x =>
 {
@@ -34,24 +48,22 @@ builder.Services.AddMassTransit(x =>
     });
 });
 
-builder.Services.AddDbContext<ProductDbContext>(options =>
+//Cache
+
+builder.Services.AddScoped<ICachingService, RedisCachingService>();
+
+builder.Services.AddStackExchangeRedisCache(o =>
 {
-    var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-    options.UseSqlServer(connectionString);
-    options.LogTo(Console.WriteLine, LogLevel.Information);
+    o.InstanceName = "instance";
+    o.Configuration = "redis:6379";
 });
 
-
-builder.Services.AddApiVersioning(options =>
-{
-    options.ReportApiVersions = true;
-    options.AssumeDefaultVersionWhenUnspecified = true;
-    options.DefaultApiVersion = new ApiVersion(1, 0);
-    options.ApiVersionReader = new UrlSegmentApiVersionReader();
-});
+//Application Services
 
 
 builder.Services.AddScoped<ProductService>();
+
+//Controllers
 
 builder.Services.AddControllers();
 
@@ -67,10 +79,8 @@ using (var scope = app.Services.CreateScope())
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.MapOpenApi();
     app.UseSwagger();
     app.UseSwaggerUI();
-
 }
 
 app.UseHttpsRedirection();

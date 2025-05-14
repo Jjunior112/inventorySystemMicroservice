@@ -6,4 +6,3 @@ public class PagedResult<T>
 
     public int PageSize { get; set; }
 }
-
