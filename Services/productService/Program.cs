@@ -14,6 +14,14 @@ builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddScoped<ICachingService, RedisCachingService>();
+
+builder.Services.AddStackExchangeRedisCache(o =>
+{
+    o.InstanceName = "instance";
+    o.Configuration = "redis:6379";
+});
+
 builder.Services.AddMassTransit(x =>
 {
     x.UsingRabbitMq((ctx, cfg) =>
@@ -53,7 +61,7 @@ var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<ProductDbContext>();
-    db.Database.Migrate(); 
+    db.Database.Migrate();
 }
 
 // Configure the HTTP request pipeline.
