@@ -1,14 +1,21 @@
 using Microsoft.EntityFrameworkCore;
 using Contracts.Enums;
+using System.Text.Json;
 
 
 public class StockService
 {
     private readonly StockDbContext _context;
 
-    public StockService(StockDbContext context)
+    private readonly ICachingService _cache;
+    private readonly ILogger _logger;
+
+
+    public StockService(StockDbContext context, ICachingService cache, ILogger<Stock> logger)
     {
         _context = context;
+        _logger = logger;
+        _cache = cache;
     }
 
     public async Task<PagedResult<Stock>> GetStocks(int pageNumber, int pageSize)
@@ -26,7 +33,32 @@ public class StockService
 
     }
 
-    public async Task<Stock?> GetStockById(Guid id) => await _context.Stocks.FindAsync(id);
+    public async Task<Stock?> GetStockById(Guid id)
+    {
+        var cacheKey = $"stock:{id}";
+
+        var stockCache = await _cache.GetAsync(cacheKey);
+
+        Stock? stock;
+
+        if (!string.IsNullOrWhiteSpace(stockCache))
+        {
+            _logger.LogInformation($"Stock {id} carreado do cache");
+
+            stock = JsonSerializer.Deserialize<Stock>(stockCache);
+
+            return stock;
+        }
+
+        _logger.LogInformation($"Stock {id} não encontrado no cache.Buscando no banco...");
+
+        stock = await _context.Stocks.Where(s => s.StockId == id).FirstOrDefaultAsync();
+
+        await _cache.SetAsync(cacheKey, JsonSerializer.Serialize(stock));
+
+
+        return stock;
+    }
 
     public async Task AddStock(Guid productId, string productName, string productCategory, DateTime createdAt)
     {
@@ -91,6 +123,8 @@ public class StockService
         if (stock.ProductQuantity > 0) return false;
 
         _context.Stocks.Remove(stock);
+        
+        await _cache.DeleteAsync(id.ToString());
 
         await _context.SaveChangesAsync();
 

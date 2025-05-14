@@ -8,15 +8,14 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
+
+//Swagger
 
 builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddControllers();
-
-builder.Services.AddScoped<StockService>();
+//DbContext
 
 builder.Services.AddDbContext<StockDbContext>(options =>
 {
@@ -25,6 +24,9 @@ builder.Services.AddDbContext<StockDbContext>(options =>
     options.LogTo(Console.WriteLine, LogLevel.Information);
 });
 
+//Versionamento
+
+
 builder.Services.AddApiVersioning(options =>
 {
     options.ReportApiVersions = true;
@@ -32,6 +34,8 @@ builder.Services.AddApiVersioning(options =>
     options.DefaultApiVersion = new ApiVersion(1, 0);
     options.ApiVersionReader = new UrlSegmentApiVersionReader();
 });
+
+//Mass Transit
 
 builder.Services.AddMassTransit(x =>
 {
@@ -59,19 +63,36 @@ builder.Services.AddMassTransit(x =>
     });
 });
 
+//Cache
+
+builder.Services.AddScoped<ICachingService, RedisCachingService>();
+
+builder.Services.AddStackExchangeRedisCache(o =>
+{
+    o.InstanceName = "instance";
+    o.Configuration = "redis:6379";
+});
+
+
+//Application Services
+
+builder.Services.AddScoped<StockService>();
+
+//Controllers
+
+builder.Services.AddControllers();
 
 var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<StockDbContext>();
-    db.Database.Migrate(); 
+    db.Database.Migrate();
 }
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.MapOpenApi();
     app.UseSwagger();
     app.UseSwaggerUI();
 }
