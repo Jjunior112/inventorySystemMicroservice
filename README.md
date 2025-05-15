@@ -117,6 +117,29 @@ http://localhost:9000
 > Todos os endpoints devem ser acessados via Gateway (`localhost:9000`) após configuração do `ocelot.json`.
 > As portas padrões podem ser alteradas no arquivo .env
 ---
+# Variáveis de Ambiente (.env)
+
+Certifique-se de ter as seguintes variáveis no seu arquivo `.env` na raiz do projeto:
+
+```env
+RABBITMQ_DEFAULT_USER=guest
+RABBITMQ_DEFAULT_PASS=guest
+
+SA_PASSWORD_USER=Seu@123
+SA_PASSWORD_PRODUCT=Seu@123
+SA_PASSWORD_OPERATIONS=Seu@123
+SA_PASSWORD_STOCK=Seu@123
+
+USER_DB_PORT=1433
+PRODUCT_DB_PORT=1434
+OPERATIONS_DB_PORT=1435
+STOCK_DB_PORT=1436
+
+USER_SERVICE_PORT=5001
+PRODUCT_SERVICE_PORT=5002
+OPERATIONS_SERVICE_PORT=5003
+STOCK_SERVICE_PORT=5004
+API_GATEWAY_PORT=8000
 
 ##  Rotas
 
