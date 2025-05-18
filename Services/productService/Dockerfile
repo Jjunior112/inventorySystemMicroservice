@@ -10,6 +10,7 @@ COPY Services/productService ./Services/productService
 
 # Restaura as dependências
 WORKDIR /App/Services/productService
+
 RUN dotnet restore
 
 # Publica a aplicação
