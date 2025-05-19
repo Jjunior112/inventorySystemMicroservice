@@ -1,9 +1,8 @@
-
 :root {
-  --color1: #0087E1;
-  --color2: #E05D00;
-  --color3: #E09F00;
-  --color4: #304E61;
+  --color1: #0087e1;
+  --color2: #e05d00;
+  --color3: #e09f00;
+  --color4: #304e61;
   --color5: #615330;
 }
 
@@ -13,13 +12,11 @@ nav {
   justify-content: space-around;
   background-color: var(--color1);
   color: #ffffff;
-  
 }
 
 nav ul {
   margin: 0 auto;
   width: 50%;
-
   display: flex;
   padding: 1em;
   justify-content: space-between;
@@ -28,13 +25,43 @@ nav ul {
 
 nav li {
   margin: 1em;
-
 }
 
 nav a {
   color: #ffffff;
   text-decoration: none;
 }
-nav a:hover{
+nav a:hover {
   color: var(--color2);
+}
+
+table {
+  width: 70%;
+  border-collapse: collapse;
+  margin: 20px auto;
+}
+th,
+td {
+  border: 1px solid #999;
+  padding: 8px 12px;
+  text-align: center;
+}
+th {
+  background-color: var(--color1);
+  color: #ffffff;
+}
+th button {
+  background-color: var(--color2);
+  border: none;
+  color: #ffffff;
+  border-radius: 0.5em;
+  padding: 0.2em;
+}
+th button:hover {
+  cursor: pointer;
+  opacity: 0.9;
+}
+
+footer {
+  text-align: center;
 }
