@@ -20,7 +20,7 @@ public class OperationController : ControllerBase
 
     [HttpGet]
 
-    public async Task<IActionResult> GetOperations([FromQuery] int pageNumber, [FromQuery] int pageSize)
+    public async Task<IActionResult> Get([FromQuery] int pageNumber, [FromQuery] int pageSize)
     {
         var operations = await _operationService.GetOperations(pageNumber, pageSize);
 
@@ -28,7 +28,7 @@ public class OperationController : ControllerBase
     }
 
     [HttpGet("{id}")]
-    public async Task<IActionResult> GetOperationsById(Guid id)
+    public async Task<IActionResult> GetById(Guid id)
     {
         var operation = await _operationService.GetOperationById(id);
 
@@ -39,11 +39,12 @@ public class OperationController : ControllerBase
 
     [HttpPost]
 
-    public async Task<IActionResult> AddOperation([FromBody] OperationRequest request)
+    public async Task<IActionResult> Post([FromBody] OperationRequest request)
     {
 
         var operation = new Operation(request.productId, request.operationQuantity, request.operationType);
 
+        await _operationService.AddOperation(operation);
 
         await _publishEndPoint.Publish<IOperationCreated>(new
         {
@@ -54,9 +55,8 @@ public class OperationController : ControllerBase
         CancellationToken.None
         );
 
-        await _operationService.AddOperation(operation);
 
-        return CreatedAtAction(nameof(GetOperationsById), new { id = operation.OperationId }, operation);
+        return CreatedAtAction(nameof(GetById), new { id = operation.OperationId }, operation);
 
     }
 

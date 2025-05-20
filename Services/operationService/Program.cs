@@ -8,6 +8,19 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 
+//CORS
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowFrontend", policy =>
+    {
+        policy.WithOrigins("http://localhost:5173")
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+    });
+});
+
+
 //Swagger
 
 builder.Services.AddSwaggerGen();
@@ -56,7 +69,8 @@ builder.Services.AddMassTransit(x =>
 
 builder.Services.AddScoped<ICachingService, RedisCachingService>();
 
-builder.Services.AddStackExchangeRedisCache(o => {
+builder.Services.AddStackExchangeRedisCache(o =>
+{
     o.InstanceName = "instance";
     o.Configuration = "redis:6379";
 });
@@ -73,11 +87,17 @@ builder.Services.AddControllers();
 
 var app = builder.Build();
 
+
+
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<OperationDbContext>();
     db.Database.Migrate();
 }
+
+// Habilita CORS antes do MapControllers
+
+app.UseCors("AllowFrontend");
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

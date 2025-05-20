@@ -61,7 +61,7 @@ public class OperationService
     public async Task AddOperation(Operation operation)
     {
 
-        _context.Operations.Add(operation);
+        _context.Add(operation);
 
         await _context.SaveChangesAsync();
     }
