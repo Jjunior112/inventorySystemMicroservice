@@ -32,7 +32,8 @@ services:
 
   userservice:
     build:
-      context: ./Services/userService
+      context: .
+      dockerfile: Services/userService/Dockerfile
     container_name: userservice
     ports:
       - "${USER_SERVICE_PORT}:8080"
@@ -40,7 +41,7 @@ services:
       - backend
     depends_on:
       - usersDb
-      
+    restart: unless-stopped  
 
   productsDb:
     image: mcr.microsoft.com/mssql/server:2019-latest
@@ -54,8 +55,9 @@ services:
       - backend
 
   productservice:
-    build:
-      context: ./Services/productService
+    build: 
+      context: .
+      dockerfile: ./Services/productService/Dockerfile
     container_name: productservice
     ports:
       - "${PRODUCT_SERVICE_PORT}:8080"
@@ -64,6 +66,7 @@ services:
     depends_on:
       - productsDb
       - rabbitmq
+    restart: unless-stopped
 
   operationsDb:
     image: mcr.microsoft.com/mssql/server:2019-latest
@@ -78,7 +81,8 @@ services:
 
   operationsservice:
     build:
-      context: ./Services/operationService
+      context: .
+      dockerfile: ./Services/operationService/Dockerfile
     container_name: operationsservice
     ports:
       - "${OPERATIONS_SERVICE_PORT}:8080"
@@ -101,7 +105,8 @@ services:
 
   stocksservice:
     build:
-      context: ./Services/stockService
+        context: .
+        dockerfile: ./Services/stockService/Dockerfile
     container_name: stocksservice
     ports:
       - "${STOCK_SERVICE_PORT}:8080"
@@ -110,10 +115,12 @@ services:
     depends_on:
       - stocksDb
       - rabbitmq
+    restart: unless-stopped
 
   apigateway:
     build:
-      context: ./Gateway/apiGateway
+        context: .
+        dockerfile: ./Gateway/apiGateway/Dockerfile
     container_name: apigateway
     ports:
 
@@ -124,6 +131,7 @@ services:
       - operationsservice
       - stocksservice
       - userservice
+    restart: unless-stopped
     networks:
       - backend
 
