@@ -93,7 +93,48 @@ tr button:nth-child(3) {
   background-color: var(--color5);
 
 }
-
+h1 {
+  color: var(--color1);
+  text-align: center;
+}
+form {
+ 
+  display: flex;
+  flex-direction: column;
+  margin: 0 auto;
+  width: 50%;
+  padding: .5em;
+}
+form label {
+  margin: 0 auto;
+  color: var(--color1);
+  text-align: start;
+  margin-top: .5em;
+  margin-bottom: .5em;
+}
+form input,select,option {
+  margin: 0 auto;
+  
+  width: 40%;
+}
+form button {
+  background-color: var(--color2);
+  border: none;
+  color: #ffffff;
+  border-radius: 0.5em;
+  margin: 0 auto;
+  width: 25%;
+  margin-top: 1em;
+}
+form button:hover {
+ cursor: pointer;
+ opacity: 0.8;
+}
+#deleteProduct
+{
+  background-color: #f50400;
+}
 footer {
   text-align: center;
 }
+

@@ -11,7 +11,7 @@ const Table = () => {
   const [stocks, setStocks] = useState<Stock[]>([]);
 
   useEffect(() => {
-    fetch('http://localhost:9000/v1/stocks')
+    fetch('http://localhost:9000/v1/stocks?pageNumber=1&pageSize=10')
       .then(response => {
         if (!response.ok) throw new Error('Erro na requisição');
         return response.json();
@@ -33,8 +33,8 @@ const Table = () => {
         </tr>
       </thead>
       <tbody>
-        {stocks.map((product, index) => (
-          <tr key={index}>
+        {stocks.map((product) => (
+          <tr key={product.productId}>
             <td>{product.productName}</td>
             <td>{product.productCategory}</td>
             <td>{product.productQuantity}</td>
