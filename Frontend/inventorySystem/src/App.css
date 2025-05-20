@@ -2,8 +2,8 @@
   --color1: #0087e1;
   --color2: #e05d00;
   --color3: #e09f00;
-  --color4: #304e61;
-  --color5: #615330;
+  --color4: #00F543;
+  --color5: #F50400;
 }
 
 nav {
@@ -31,6 +31,7 @@ nav a {
   color: #ffffff;
   text-decoration: none;
 }
+
 nav a:hover {
   color: var(--color2);
 }
@@ -40,16 +41,19 @@ table {
   border-collapse: collapse;
   margin: 20px auto;
 }
+
 th,
 td {
   border: 1px solid #999;
   padding: 8px 12px;
   text-align: center;
 }
+
 th {
   background-color: var(--color1);
   color: #ffffff;
 }
+
 th button {
   background-color: var(--color2);
   border: none;
@@ -57,9 +61,37 @@ th button {
   border-radius: 0.5em;
   padding: 0.2em;
 }
+
 th button:hover {
   cursor: pointer;
-  opacity: 0.9;
+  opacity: 0.7;
+}
+
+tr button {
+  border: none;
+  color: #ffffff;
+  border-radius: 0.5em;
+  padding: 0.2em;
+  margin: .5em;
+}
+tr button:hover{
+  cursor: pointer;
+  opacity: 0.8;
+}
+
+tr button:first-child {
+  background-color: var(--color4);
+
+}
+
+tr button:nth-child(2) {
+  background-color: var(--color3);
+
+}
+
+tr button:nth-child(3) {
+  background-color: var(--color5);
+
 }
 
 footer {
