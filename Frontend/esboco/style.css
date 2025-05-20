@@ -1,9 +1,14 @@
+* {
+  padding: 0;
+  margin: 0;
+}
+
 :root {
   --color1: #0087e1;
   --color2: #e05d00;
   --color3: #e09f00;
-  --color4: #00F543;
-  --color5: #F50400;
+  --color4: #00f543;
+  --color5: #f50400;
 }
 
 nav {
@@ -72,27 +77,25 @@ tr button {
   color: #ffffff;
   border-radius: 0.5em;
   padding: 0.2em;
-  margin: .5em;
+  margin: 0.5em;
 }
-tr button:hover{
+tr button:hover {
   cursor: pointer;
   opacity: 0.8;
 }
 
 tr button:first-child {
   background-color: var(--color4);
-
 }
 
 tr button:nth-child(2) {
   background-color: var(--color3);
-
 }
 
 tr button:nth-child(3) {
   background-color: var(--color5);
-
 }
+
 h1 {
   color: var(--color1);
   text-align: center;
@@ -134,7 +137,7 @@ form button:hover {
 {
   background-color: #f50400;
 }
+
 footer {
   text-align: center;
 }
-

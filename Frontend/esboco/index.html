@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <nav>
+      <ul>
+        <li><a href="">Pagina inicial</a></li>
+        <li><a href="">Produtos</a></li>
+        <li><a href="">Operações</a></li>
+      </ul>
+    </nav>
+
+    <main>
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Nome</th>
+            <th>Saldo</th>
+            <th><button>Cadastrar produto</button></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>1</td>
+            <td>João</td>
+            <td>R$ 1500,00</td>
+            <td>
+              <div>
+                <button>Nova operação</button>
+                <button>Editar produto</button>
+                <button>Excluir produto</button>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td>2</td>
+            <td>Maria</td>
+            <td>R$ 2300,50</td>
+            <td>
+              <div>
+                <button>Nova operação</button>
+                <button>Editar produto</button>
+                <button>Excluir produto</button>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td>3</td>
+            <td>Carlos</td>
+            <td>R$ 985,75</td>
+            <td>
+              <div>
+                <button>Nova operação</button>
+                <button>Editar produto</button>
+                <button>Excluir produto</button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h1>Cadastrar Produto</h1>
+      <form id="productForm">
+        <label for="productName">Nome do Produto:</label>
+        <input
+          type="text"
+          id="productName"
+          name="productName"
+          placeholder="Digite o nome do produto"
+          required
+        /><br /><br />
+
+        <label for="productCategory">Categoria:</label>
+        <input
+          type="text"
+          id="productCategory"
+          name="productCategory"
+          placeholder="Digite a categoria do produto"
+          required
+        />
+
+        <button type="submit">Criar Produto</button>
+      </form>
+
+      <h1>Registrar Operação</h1>
+
+      <form id="productForm">
+        <label for="operationQuantity">Quantidade:</label>
+        <input
+          type="number"
+          id="operationQuantity"
+          name="operationQuantity"
+          placeholder="Digite a quantidade da operação"
+          required
+        />
+
+        <label for="operationType">Operação:</label><br />
+        <select id="operationType" name="operationType" required>
+          <option value="">Selecione uma operação</option>
+          <option value="entrada">Entrada</option>
+          <option value="saida">Saída</option></select
+        >
+
+        <button type="submit">Registrar operação</button>
+      </form>
+
+      <h1>Excluir Produto</h1>
+
+      <form id="productForm">
+        <label for="productName">Nome do Produto:</label>
+        <input
+          type="text"
+          id="productName"
+          name="productName"
+          placeholder="Digite o nome do produto"
+          readonly
+        />
+
+        <label for="productCategory">Categoria:</label>
+        <input
+          type="text"
+          id="productCategory"
+          name="productCategory"
+          placeholder="Digite a categoria do produto"
+          readonly
+        />
+
+        <button type="submit" id="deleteProduct">Excluir Produto</button>
+      </form>
+
+      
+    </main>
+
+    <footer>
+      <p>&copy; 2025 <span>Lorem</span>. All Rights Reserved</p>
+    </footer>
+  </body>
+</html>
