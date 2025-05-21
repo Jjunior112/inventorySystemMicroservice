@@ -42,7 +42,7 @@ public class OperationController : ControllerBase
     public async Task<IActionResult> Post([FromBody] OperationRequest request)
     {
 
-        var operation = new Operation(request.productId, request.operationQuantity, request.operationType);
+        var operation = new Operation(request.productId,request.productName, request.operationQuantity, request.operationType);
 
         await _operationService.AddOperation(operation);
 

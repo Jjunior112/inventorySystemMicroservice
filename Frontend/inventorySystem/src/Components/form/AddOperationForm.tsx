@@ -9,7 +9,7 @@ const AddOperationForm = () => {
   const [productName, setProductName] = useState('');
   const [productCategory, setProductCategory] = useState('');
   const [operationQuantity, setOperationQuantity] = useState('');
-  const [operationType, setOperationType] = useState(3);
+  const [operationType, setOperationType] = useState('');
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -38,12 +38,13 @@ const AddOperationForm = () => {
         },
         body: JSON.stringify({
           productId,
+          productName,
           operationQuantity,
           operationType
         })
       });
 
-      if (response.status !== 201 || operationType === 3) {
+      if (response.status !== 201 || operationType === '') {
         throw new Error('Produto não encontrado ou erro ao criar operação!');
       } else {
         alert('Operação efetuada com sucesso!');
@@ -98,11 +99,11 @@ const AddOperationForm = () => {
           name="operationType"
           required
           value={operationType}
-          onChange={(e) => setOperationType(Number(e.target.value))}
+          onChange={(e) => setOperationType(e.target.value)}
         >
-          <option value="3">Selecione uma operação</option>
-          <option value="1">Entrada</option>
-          <option value="0">Saída</option>
+          <option value=" ">Selecione uma operação</option>
+          <option value="StockIn">Entrada</option>
+          <option value="StockOut">Saída</option>
         </select>
 
         <button type="submit" disabled={loading}>
