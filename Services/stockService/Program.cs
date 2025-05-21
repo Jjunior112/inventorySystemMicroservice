@@ -1,4 +1,5 @@
 using MassTransit;
+using System.Text.Json.Serialization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.AspNetCore.Mvc;
@@ -89,6 +90,12 @@ builder.Services.AddStackExchangeRedisCache(o =>
 //Application Services
 
 builder.Services.AddScoped<StockService>();
+
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+    });
 
 //Controllers
 
