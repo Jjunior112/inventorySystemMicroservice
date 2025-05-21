@@ -36,6 +36,15 @@ nav a:hover {
   color: var(--color2);
 }
 
+main {
+  min-height: 75%;
+  width: 85%;
+  margin: 0 auto;
+  background-color: #fefefe;
+  padding: 1em;
+
+}
+
 table {
   width: 70%;
   border-collapse: collapse;
@@ -74,7 +83,15 @@ tr button {
   padding: 0.2em;
   margin: .5em;
 }
-tr button:hover{
+
+tr a {
+  text-decoration: none;
+  color: #ffffff;
+
+
+}
+
+tr button:hover {
   cursor: pointer;
   opacity: 0.8;
 }
@@ -93,18 +110,20 @@ tr button:nth-child(3) {
   background-color: var(--color5);
 
 }
+
 h1 {
   color: var(--color1);
   text-align: center;
 }
+
 form {
- 
   display: flex;
   flex-direction: column;
   margin: 0 auto;
-  width: 50%;
-  padding: .5em;
+  width: 80%;
+  padding: 5em;
 }
+
 form label {
   margin: 0 auto;
   color: var(--color1);
@@ -112,11 +131,15 @@ form label {
   margin-top: .5em;
   margin-bottom: .5em;
 }
-form input,select,option {
+
+form input,
+select,
+option {
   margin: 0 auto;
-  
+
   width: 40%;
 }
+
 form button {
   background-color: var(--color2);
   border: none;
@@ -126,15 +149,18 @@ form button {
   width: 25%;
   margin-top: 1em;
 }
+
+
+
 form button:hover {
- cursor: pointer;
- opacity: 0.8;
+  cursor: pointer;
+  opacity: 0.8;
 }
-#deleteProduct
-{
+
+#deleteProduct {
   background-color: #f50400;
 }
+
 footer {
   text-align: center;
 }
-

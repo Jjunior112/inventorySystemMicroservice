@@ -90,13 +90,20 @@ public class ProductService
 
     public async Task<bool> Delete(Guid id)
     {
+        var cacheKey = $"product: {id}";
+
         var product = await _context.Products.FindAsync(id);
 
         if (product == null) return false;
 
+        var productCache = await _cache.GetAsync(cacheKey);
+
+        if (productCache != null)
+        {
+            await _cache.DeleteAsync(cacheKey);
+        }
+
         _context.Products.Remove(product);
-        
-        await _cache.DeleteAsync(id.ToString());
 
         await _context.SaveChangesAsync();
 
