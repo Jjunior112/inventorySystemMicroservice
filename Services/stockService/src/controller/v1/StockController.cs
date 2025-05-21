@@ -24,4 +24,17 @@ public class StockController : ControllerBase
     [HttpGet("{id}")]
     public async Task<IActionResult> GetStocksById(Guid id) => Ok(await _stockService.GetStockById(id));
 
+    [HttpDelete("{id}")]
+
+    public async Task<IActionResult> DeleteStock(Guid id)
+    {
+        var stock = await _stockService.DeleteStock(id);
+
+        if (stock == null || false) return NotFound();
+
+
+
+        return NoContent();
+    }
+
 }

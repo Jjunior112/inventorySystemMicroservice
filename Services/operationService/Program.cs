@@ -89,15 +89,14 @@ var app = builder.Build();
 
 
 
+
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<OperationDbContext>();
     db.Database.Migrate();
 }
 
-// Habilita CORS antes do MapControllers
 
-app.UseCors("AllowFrontend");
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -108,6 +107,10 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+// Habilita CORS antes do MapControllers
+
+app.UseCors("AllowFrontend");
 
 app.MapControllers();
 

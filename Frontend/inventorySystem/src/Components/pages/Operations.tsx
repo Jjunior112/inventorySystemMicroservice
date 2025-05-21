@@ -7,7 +7,7 @@ type Operation = {
   operationType: number;
 };
 
-const TableOperations = () => {
+const Operations = () => {
   const [operations, setOperations] = useState<Operation[]>([]);
 
   useEffect(() => {
@@ -44,4 +44,4 @@ const TableOperations = () => {
   );
 };
 
-export default TableOperations;
+export default Operations;

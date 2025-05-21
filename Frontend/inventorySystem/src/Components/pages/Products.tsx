@@ -1,13 +1,15 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 
 type Stock = {
+  stockId: number;
   productId: number;
   productName: string;
   productCategory: string;
   productQuantity: number;
 };
 
-const Table = () => {
+const Products = () => {
   const [stocks, setStocks] = useState<Stock[]>([]);
 
   useEffect(() => {
@@ -29,21 +31,21 @@ const Table = () => {
             <th>Categoria</th>
             <th>Saldo</th>
             <th>
-              <button>Cadastrar produto</button>
+              <button><Link to="newProduct">Cadastrar produto</Link></button>
             </th>
           </tr>
         </thead>
         <tbody>
-          {stocks.map((product) => (
-            <tr key={product.productId}>
-              <td>{product.productName}</td>
-              <td>{product.productCategory}</td>
-              <td>{product.productQuantity}</td>
+          {stocks.map((stock) => (
+            <tr key={stock.stockId}>
+              <td>{stock.productName}</td>
+              <td>{stock.productCategory}</td>
+              <td>{stock.productQuantity}</td>
               <td>
                 <div>
-                  <button>Nova operação</button>
-                  <button>Editar produto</button>
-                  <button>Excluir produto</button>
+                  <button><Link to={`/operations/newOperation/${stock.stockId}`}>Nova operação</Link></button>
+                  
+                
                 </div>
               </td>
             </tr>
@@ -54,4 +56,4 @@ const Table = () => {
   );
 };
 
-export default Table;
+export default Products;

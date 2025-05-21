@@ -114,7 +114,7 @@ public class StockService
 
     }
 
-    public async Task<bool?> Delete(Guid id)
+    public async Task<bool?> DeleteStock(Guid id)
     {
         var stock = await _context.Stocks.FindAsync(id);
 

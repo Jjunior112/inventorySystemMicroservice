@@ -7,6 +7,18 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 
+//CORS
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowFrontend", policy =>
+    {
+        policy.WithOrigins("http://localhost:5173")
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+    });
+});
+
 // Swagger
 
 builder.Services.AddSwaggerGen();
@@ -48,6 +60,10 @@ builder.Services.AddControllers();
 
 
 var app = builder.Build();
+
+// Habilita CORS antes do MapControllers
+
+app.UseCors("AllowFrontend");
 
 using (var scope = app.Services.CreateScope())
 {
