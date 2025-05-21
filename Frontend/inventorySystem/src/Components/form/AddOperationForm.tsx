@@ -1,12 +1,8 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 
-
 const AddOperationForm = () => {
-
   const { stockId } = useParams();
-
-
   const navigate = useNavigate();
 
   const [productId, setProductId] = useState('');
@@ -14,8 +10,6 @@ const AddOperationForm = () => {
   const [productCategory, setProductCategory] = useState('');
   const [operationQuantity, setOperationQuantity] = useState('');
   const [operationType, setOperationType] = useState(3);
-
-
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -25,19 +19,16 @@ const AddOperationForm = () => {
         return response.json();
       })
       .then((data) => {
-        setProductId(data.productId)
-        setProductName(data.productName)
-        setProductCategory(data.productCategory)
+        setProductId(data.productId);
+        setProductName(data.productName);
+        setProductCategory(data.productCategory);
       })
       .catch((error) => console.error("Erro:", error));
-  }, []);
+  }, [stockId]);
 
-
-
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: any) => {
     e.preventDefault();
-
-    setLoading(true)
+    setLoading(true);
 
     try {
       const response = await fetch(`http://localhost:9000/v1/operations`, {
@@ -46,24 +37,24 @@ const AddOperationForm = () => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          productId: productId,
-          operationQuantity: operationQuantity,
-          operationType: operationType
+          productId,
+          operationQuantity,
+          operationType
         })
       });
 
-
-      if (response.status !== 201 || operationType ===3) {
+      if (response.status !== 201 || operationType === 3) {
         throw new Error('Produto não encontrado ou erro ao criar operação!');
-        
       } else {
-        alert('operação efetuada com sucesso!');
+        alert('Operação efetuada com sucesso!');
         navigate('/products');
       }
-
-
-    } catch (error) {
-      console.log(error.message)
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        console.log(error.message);
+      } else {
+        console.log("Erro desconhecido:", error);
+      }
     } finally {
       setLoading(false);
     }
@@ -74,7 +65,6 @@ const AddOperationForm = () => {
       <h1>Registrar Operação</h1>
 
       <form id="operationForm" onSubmit={handleSubmit}>
-
         <label htmlFor="productName">Nome:</label>
         <input
           type="text"
@@ -83,6 +73,7 @@ const AddOperationForm = () => {
           value={productName}
           readOnly
         />
+
         <label htmlFor="productCategory">Categoria:</label>
         <input
           type="text"
@@ -97,13 +88,11 @@ const AddOperationForm = () => {
           type="number"
           id="operationQuantity"
           name="operationQuantity"
-          onChange={(e) => setOperationQuantity(Number(e.target.value))}
+          onChange={(e) => setOperationQuantity(e.target.value)}
           required
         />
 
-
-        <label htmlFor="operationType">Categoria:</label>
-
+        <label htmlFor="operationType">Tipo de Operação:</label>
         <select
           id="operationType"
           name="operationType"

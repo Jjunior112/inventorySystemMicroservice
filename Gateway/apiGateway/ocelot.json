@@ -4,37 +4,103 @@
       "DownstreamPathTemplate": "/api/v1/products/{everything}",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
-        { "Host": "productservice", "Port": 8080 }
+        {
+          "Host": "productservice",
+          "Port": 8080
+        }
       ],
       "UpstreamPathTemplate": "/v1/products/{everything}",
-      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE", "OPTIONS" ]
+      "UpstreamHttpMethod": [
+        "GET",
+        "POST",
+        "PUT",
+        "DELETE",
+        "OPTIONS"
+      ]
     },
     {
       "DownstreamPathTemplate": "/api/v1/operations/{everything}",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
-        { "Host": "operationsservice", "Port": 8080 }
+        {
+          "Host": "operationsservice",
+          "Port": 8080
+        }
       ],
       "UpstreamPathTemplate": "/v1/operations/{everything}",
-      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE", "OPTIONS" ]
+      "UpstreamHttpMethod": [
+        "GET",
+        "POST",
+        "PUT",
+        "DELETE",
+        "OPTIONS"
+      ]
     },
     {
       "DownstreamPathTemplate": "/api/v1/stocks/{everything}",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
-        { "Host": "stocksservice", "Port": 8080 }
+        {
+          "Host": "stocksservice",
+          "Port": 8080
+        }
       ],
       "UpstreamPathTemplate": "/v1/stocks/{everything}",
-      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE", "OPTIONS" ]
+      "UpstreamHttpMethod": [
+        "GET",
+        "POST",
+        "PUT",
+        "DELETE",
+        "OPTIONS"
+      ]
     },
     {
       "DownstreamPathTemplate": "/api/v1/users/{everything}",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
-        { "Host": "userservice", "Port": 8080 }
+        {
+          "Host": "userservice",
+          "Port": 8080
+        }
       ],
       "UpstreamPathTemplate": "/v1/users/{everything}",
-      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE", "OPTIONS" ]
+      "UpstreamHttpMethod": [
+        "GET",
+        "POST",
+        "PUT",
+        "DELETE",
+        "OPTIONS"
+      ]
+    },
+    {
+      "DownstreamPathTemplate": "/",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "frontend",
+          "Port": 80
+        }
+      ],
+      "UpstreamPathTemplate": "/app",
+      "UpstreamHttpMethod": [
+        "GET",
+        "OPTIONS"
+      ]
+    },
+    {
+      "DownstreamPathTemplate": "/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "frontend",
+          "Port": 80
+        }
+      ],
+      "UpstreamPathTemplate": "/app/{everything}",
+      "UpstreamHttpMethod": [
+        "GET",
+        "OPTIONS"
+      ]
     }
   ],
   "GlobalConfiguration": {
