@@ -24,6 +24,7 @@ InventorySystem/
 ├── docker-compose.yml               # Orquestração de todos os serviços, gateway e frontend
 │
 ├── Contracts/                        # Camada de frontend da aplicação
+│        ├── Caching
 │        ├── Enums
 │        ├── Events
 │        └── Responses
@@ -106,8 +107,9 @@ http://localhost:9000
 
 ## 🔁 Serviços Disponíveis
 
-| Serviço           | Porta Padrão | Descrição                         |
-|-------------------|--------------|-----------------------------------|
+| Serviço           | Porta Padrão | Descrição                        |
+|-------------------|--------------|----------------------------------|
+| Frontend          | 3000         | Frontend da aplicação            |
 | ProductService    | 5002         | Cadastro e listagem de produtos  |
 | OperationService  | 5003         | Operações de entrada/saída       |
 | StockService      | 5004         | Controle de estoque              |
@@ -140,6 +142,7 @@ PRODUCT_SERVICE_PORT=5002
 OPERATIONS_SERVICE_PORT=5003
 STOCK_SERVICE_PORT=5004
 API_GATEWAY_PORT=9000
+FRONTEND_PORT = 3000
 ```
 ##  Rotas
 
@@ -191,6 +194,7 @@ API_GATEWAY_PORT=9000
       {
         "operationId": "d4f07a7a-40fd-46f0-9cba-912f9b98a93e",
         "productId": "acc51146-8873-4cff-ac5f-ab854a75c13b",
+        "productName":"Sample Product",
         "operationQuantity": 150,
         "operationType": 1,
         "operationAt": "2025-04-19T03:34:25.9385576+00:00"
@@ -205,6 +209,7 @@ API_GATEWAY_PORT=9000
     {
       "operationId": "d4f07a7a-40fd-46f0-9cba-912f9b98a93e",
       "productId": "acc51146-8873-4cff-ac5f-ab854a75c13b",
+      "productName":"Sample Product",
       "operationQuantity": 150,
       "operationType": 1,
       "operationAt": "2025-04-19T03:34:25.9385576+00:00"
@@ -217,6 +222,7 @@ API_GATEWAY_PORT=9000
     ```json
     {
       "productId": "acc51146-8873-4cff-ac5f-ab854a75c13b",
+      "productName":"Sample Product",
       "operationQuantity": 150,
       "operationType": 1
     }
@@ -267,15 +273,6 @@ Este sistema utiliza o RabbitMQ para orquestrar eventos entre microsserviços. O
 - `OperationCreatedEvent` no `StockService`
 
 RabbitMQ está configurado no `docker-compose.yml` e pode ser acessado em `http://localhost:15672` com login `guest` / `guest`.
-
----
-## 📌 Próximos Passos
-
-- Integração com AuthService (JWT)
-- Documentação com Swagger
-- Serviço de reserva
-- Serviço de confirmação de reserva
----
 
 ## 📄 Licença
 
