@@ -22,18 +22,32 @@ public class ProductService
 
     public async Task<PagedResult<Product>> GetProducts(int pageNumber, int pageSize)
     {
+        string cacheKey = $"products:page:{pageNumber}:size:{pageSize}";
+
+        var cachedResult = await _cache.GetAsync<PagedResult<Product>>(cacheKey);
+        if (cachedResult != null)
+        {
+            _logger.LogInformation("Produtos carregados do cache!");
+            return cachedResult;
+        }
+
+        _logger.LogInformation("buscando produtos no banco...");
 
         var totalCounts = await _context.Products.CountAsync();
 
         var products = await _context.Products.Skip((pageNumber - 1) * pageSize).Take(pageSize).OrderBy(p => p.CreatedAt).ToListAsync();
 
-        return new PagedResult<Product>
+        var result = new PagedResult<Product>
         {
             Items = products,
             TotalCounts = totalCounts,
             Page = pageNumber,
             PageSize = pageSize
         };
+
+        await _cache.SetAsync(cacheKey, result, TimeSpan.FromMinutes(5));
+
+        return result;
 
     }
 

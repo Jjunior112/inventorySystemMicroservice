@@ -20,17 +20,31 @@ public class StockService
 
     public async Task<PagedResult<Stock>> GetStocks(int pageNumber, int pageSize)
     {
+        string cacheKey = $"stocks:page:{pageNumber}:size:{pageSize}";
+
+        var cachedResult = await _cache.GetAsync<PagedResult<Stock>>(cacheKey);
+        if (cachedResult != null)
+        {
+            _logger.LogInformation("Estoque carregado do cache!");
+            return cachedResult;
+        }
+
+        _logger.LogInformation("buscando estoque no banco...");
+
         var totalCounts = await _context.Stocks.CountAsync();
 
         var stocks = await _context.Stocks.ToListAsync();
 
-        return new PagedResult<Stock>
+        var result = new PagedResult<Stock>
         {
             Items = stocks,
             Page = pageNumber,
             PageSize = pageSize
         };
 
+        await _cache.SetAsync(cacheKey, result, TimeSpan.FromMinutes(5));
+
+        return result;
     }
 
     public async Task<Stock?> GetStockById(Guid id)
@@ -123,7 +137,7 @@ public class StockService
         if (stock.ProductQuantity > 0) return false;
 
         _context.Stocks.Remove(stock);
-        
+
         await _cache.DeleteAsync(id.ToString());
 
         await _context.SaveChangesAsync();
