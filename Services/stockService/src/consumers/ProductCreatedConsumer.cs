@@ -16,7 +16,14 @@ public class ProductCreatedConsumer : IConsumer<IProductCreated>
     {
         var message = context.Message;
 
-        await _stockService.AddStock(message.ProductId, message.ProductName, message.ProductCategory, message.CreatedAt);
+        await _stockService.AddStock(message.ProductId, message.ProductName, message.ProductCategory, message.CreatedAt,message.IsActive);
+
+    }
+     public async Task Update(ConsumeContext<IProductCreated> context)
+    {
+        var message = context.Message;
+
+        await _stockService.DeleteStock(message.ProductId);
 
     }
 

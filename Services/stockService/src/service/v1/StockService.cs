@@ -20,31 +20,19 @@ public class StockService
 
     public async Task<PagedResult<Stock>> GetStocks(int pageNumber, int pageSize)
     {
-        string cacheKey = $"stocks:page:{pageNumber}:size:{pageSize}";
-
-        var cachedResult = await _cache.GetAsync<PagedResult<Stock>>(cacheKey);
-        if (cachedResult != null)
-        {
-            _logger.LogInformation("Estoque carregado do cache!");
-            return cachedResult;
-        }
-
-        _logger.LogInformation("buscando estoque no banco...");
 
         var totalCounts = await _context.Stocks.CountAsync();
 
         var stocks = await _context.Stocks.ToListAsync();
 
-        var result = new PagedResult<Stock>
+        return new PagedResult<Stock>
         {
             Items = stocks,
             Page = pageNumber,
             PageSize = pageSize
         };
 
-        await _cache.SetAsync(cacheKey, result, TimeSpan.FromMinutes(5));
 
-        return result;
     }
 
     public async Task<Stock?> GetStockById(Guid id)
@@ -74,10 +62,10 @@ public class StockService
         return stock;
     }
 
-    public async Task AddStock(Guid productId, string productName, string productCategory, DateTime createdAt)
+    public async Task AddStock(Guid productId, string productName, string productCategory, DateTime createdAt, bool isActive)
     {
 
-        var stock = new Stock(productId, productName, productCategory, createdAt);
+        var stock = new Stock(productId, productName, productCategory, createdAt, isActive);
 
 
         _context.Stocks.Add(stock);
@@ -85,24 +73,24 @@ public class StockService
         await _context.SaveChangesAsync();
     }
 
-    public async Task<Stock?> UpdateStock(Guid id, OperationType operationType, int productQuantity)
+    public async Task<Stock?> UpdateStock(UpdateStockRequest request)
     {
-        var stock = await _context.Stocks.FirstOrDefaultAsync(s => s.ProductId == id);
+        var stock = await _context.Stocks.FirstOrDefaultAsync(s => s.ProductId == request.productId);
 
         if (stock == null) return null;
 
-        switch (operationType)
+        switch (request.operationType)
         {
             case OperationType.StockOut:
 
-                if (productQuantity <= 0)
+                if (request.operationQuantity <= 0 || !stock.IsActive)
                 {
                     return null;
                 }
 
-                if (productQuantity <= stock.ProductQuantity)
+                if (request.operationQuantity <= stock.ProductQuantity)
                 {
-                    stock.ProductQuantity -= productQuantity;
+                    stock.ProductQuantity -= request.operationQuantity;
                 }
                 else
                 {
@@ -112,11 +100,11 @@ public class StockService
                 break;
 
             case OperationType.StockIn:
-                if (productQuantity <= 0)
+                if (request.operationQuantity <= 0)
                 {
                     return null;
                 }
-                stock.ProductQuantity += productQuantity;
+                stock.ProductQuantity += request.operationQuantity;
                 break;
         }
 
@@ -136,7 +124,9 @@ public class StockService
 
         if (stock.ProductQuantity > 0) return false;
 
-        _context.Stocks.Remove(stock);
+        stock.IsActive = false;
+
+        _context.Stocks.Update(stock);
 
         await _cache.DeleteAsync(id.ToString());
 

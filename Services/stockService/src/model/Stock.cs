@@ -7,11 +7,16 @@ public class Stock
 
     public string ProductCategory { get; set; }
 
+
     public DateTime CreatedAt { get; set; }
 
     public int ProductQuantity { get; set; }
 
-    public Stock(Guid productId, string productName, string productCategory, DateTime createdAt)
+    public bool IsActive { get; set; }
+
+
+
+    public Stock(Guid productId, string productName, string productCategory, DateTime createdAt, bool isActive)
     {
         StockId = Guid.NewGuid();
         ProductId = productId;
@@ -19,6 +24,7 @@ public class Stock
         ProductCategory = productCategory;
         CreatedAt = createdAt;
         ProductQuantity = 0;
+        IsActive = isActive;
     }
 
 }

@@ -9,18 +9,6 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 
-//CORS
-
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("AllowFrontend", policy =>
-    {
-        policy.WithOrigins("http://localhost:5173")
-              .AllowAnyHeader()
-              .AllowAnyMethod();
-    });
-});
-
 
 //Swagger
 
@@ -54,15 +42,22 @@ builder.Services.AddApiVersioning(options =>
 
 builder.Services.AddMassTransit(x =>
 {
-    x.UsingRabbitMq((ctx, cfg) =>
+    
+    x.AddConsumer<OperationCreatedConsumer>();
+
+    x.UsingRabbitMq((context, cfg) =>
     {
-        cfg.Host(
-                    new Uri("amqp://rabbitmq:5672"), host =>
-                    {
-                        host.Username("guest");
-                        host.Password("guest");
-                    }
-                );
+        cfg.Host(new Uri("amqp://rabbitmq:5672"), host =>
+        {
+            host.Username("guest");
+            host.Password("guest");
+        });
+
+        cfg.ReceiveEndpoint("operation-created-queue", e =>
+        {
+            e.ConfigureConsumer<OperationCreatedConsumer>(context);
+        });
+
     });
 });
 

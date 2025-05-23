@@ -53,7 +53,6 @@ builder.Services.AddApiVersioning(options =>
 builder.Services.AddMassTransit(x =>
 {
     x.AddConsumer<ProductCreatedConsumer>();
-    x.AddConsumer<OperationCreatedConsumer>();
 
     x.UsingRabbitMq((context, cfg) =>
     {
@@ -68,10 +67,6 @@ builder.Services.AddMassTransit(x =>
         e.ConfigureConsumer<ProductCreatedConsumer>(context);
     });
 
-        cfg.ReceiveEndpoint("operation-created-queue", e =>
-        {
-            e.ConfigureConsumer<OperationCreatedConsumer>(context);
-        });
 
     });
 });

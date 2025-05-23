@@ -1,4 +1,6 @@
 
+using Contracts.Events;
+using MassTransit;
 using Microsoft.AspNetCore.Mvc;
 
 [ApiVersion("1.0")]
@@ -7,11 +9,13 @@ using Microsoft.AspNetCore.Mvc;
 public class StockController : ControllerBase
 {
     private readonly StockService _stockService;
+    private readonly IPublishEndpoint _publishEndPoint;
 
 
-    public StockController(StockService stockService)
+    public StockController(StockService stockService, IPublishEndpoint publishEndpoint)
     {
         _stockService = stockService;
+        _publishEndPoint = publishEndpoint;
     }
     [HttpGet]
     public async Task<IActionResult> GetStocks([FromQuery] int pageNumber, [FromQuery] int pageSize)
@@ -24,8 +28,33 @@ public class StockController : ControllerBase
     [HttpGet("{id}")]
     public async Task<IActionResult> GetStocksById(Guid id) => Ok(await _stockService.GetStockById(id));
 
-    [HttpDelete("{id}")]
 
+    [HttpPost]
+    public async Task<IActionResult> Post( [FromBody] UpdateStockRequest request)
+    {
+
+        var updateStock = await _stockService.UpdateStock(request);
+
+        if (updateStock != null)
+        {
+
+            await _publishEndPoint.Publish<IOperationCreated>(new
+            {
+                ProductId = request.productId,
+                updateStock.ProductName,
+                OperationType = request.operationType,
+                Quantity = request.operationQuantity
+            },
+            CancellationToken.None
+            );
+
+
+            return Ok($"{updateStock.ProductName} atualizado com sucesso!");
+        }
+        return BadRequest();
+    }
+
+    [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteStock(Guid id)
     {
         var stock = await _stockService.DeleteStock(id);

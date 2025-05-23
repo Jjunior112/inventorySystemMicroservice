@@ -37,29 +37,4 @@ public class OperationController : ControllerBase
         return Ok(operation);
     }
 
-    [HttpPost]
-
-    public async Task<IActionResult> Post([FromBody] OperationRequest request)
-    {
-
-        var operation = new Operation(request.productId,request.productName, request.operationQuantity, request.operationType);
-
-        await _operationService.AddOperation(operation);
-
-        await _publishEndPoint.Publish<IOperationCreated>(new
-        {
-            ProductId = request.productId,
-            OperationType = request.operationType,
-            Quantity = request.operationQuantity
-        },
-        CancellationToken.None
-        );
-
-
-        return CreatedAtAction(nameof(GetById), new { id = operation.OperationId }, operation);
-
-    }
-
-
-
 }

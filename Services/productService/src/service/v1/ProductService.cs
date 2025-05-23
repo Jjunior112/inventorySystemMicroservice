@@ -22,33 +22,18 @@ public class ProductService
 
     public async Task<PagedResult<Product>> GetProducts(int pageNumber, int pageSize)
     {
-        string cacheKey = $"products:page:{pageNumber}:size:{pageSize}";
-
-        var cachedResult = await _cache.GetAsync<PagedResult<Product>>(cacheKey);
-        if (cachedResult != null)
-        {
-            _logger.LogInformation("Produtos carregados do cache!");
-            return cachedResult;
-        }
-
-        _logger.LogInformation("buscando produtos no banco...");
 
         var totalCounts = await _context.Products.CountAsync();
 
         var products = await _context.Products.Skip((pageNumber - 1) * pageSize).Take(pageSize).OrderBy(p => p.CreatedAt).ToListAsync();
 
-        var result = new PagedResult<Product>
+        return new PagedResult<Product>
         {
             Items = products,
             TotalCounts = totalCounts,
             Page = pageNumber,
             PageSize = pageSize
         };
-
-        await _cache.SetAsync(cacheKey, result, TimeSpan.FromMinutes(5));
-
-        return result;
-
     }
 
     public async Task<Product?> GetProductById(Guid id)
@@ -78,11 +63,22 @@ public class ProductService
         return product;
     }
 
-    public async Task AddProducts(Product product)
+    public async Task<Product?> AddProducts(AddProductRequest request)
     {
-        _context.Add(product);
+        var productVerify = await _context.Products.Where(p => p.ProductName.ToLower() == request.productName.ToLower()).FirstOrDefaultAsync();
 
-        await _context.SaveChangesAsync();
+        if (productVerify == null)
+        {
+
+            var product = new Product(request.productName, request.productCategory);
+
+            _context.Add(product);
+
+            await _context.SaveChangesAsync();
+
+            return product;
+        }
+        return null;
     }
 
     public async Task<Product?> UpdateProduct(Guid id, UpdateProductRequest request)
@@ -116,8 +112,9 @@ public class ProductService
         {
             await _cache.DeleteAsync(cacheKey);
         }
+        product.IsActive = false;
 
-        _context.Products.Remove(product);
+        _context.Products.Update(product);
 
         await _context.SaveChangesAsync();
 

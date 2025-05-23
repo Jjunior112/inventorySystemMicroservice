@@ -38,19 +38,25 @@ public class ProductController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> AddProduct(AddProductRequest request)
     {
-        var product = new Product(request.productName, request.productCategory);
 
-        await _productService.AddProducts(product);
+        var product = await _productService.AddProducts(request);
 
-        await _publishEndPoint.Publish<IProductCreated>(new
+        if (product != null)
         {
-            product.ProductId,
-            product.ProductName,
-            product.ProductCategory,
-            product.CreatedAt
-        }, CancellationToken.None);
 
-        return CreatedAtAction(nameof(GetProductById), new { id = product.ProductId }, product);
+            await _publishEndPoint.Publish<IProductCreated>(new
+            {
+                product.ProductId,
+                product.ProductName,
+                product.ProductCategory,
+                product.CreatedAt,
+                product.IsActive
+            }, CancellationToken.None);
+
+            return CreatedAtAction(nameof(GetProductById), new { id = product.ProductId }, product);
+        }
+
+        return BadRequest();
 
     }
     [HttpPatch("{id}")]
@@ -67,7 +73,25 @@ public class ProductController : ControllerBase
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteProduct(Guid id)
     {
-        return await _productService.Delete(id) ? NoContent() : NotFound();
-    }
+        var product = await _productService.GetProductById(id);
 
+        if (product != null)
+        {
+            var productDeleted = await _productService.Delete(product.ProductId);
+
+            if (productDeleted)
+            {
+                await _publishEndPoint.Publish<IProductCreated>(new
+                {
+                    product.ProductId,
+                    product.ProductName,
+                    product.ProductCategory,
+                    product.CreatedAt
+                }, CancellationToken.None);
+
+                return NoContent();
+            }
+        }
+        return NotFound();
+    }
 }

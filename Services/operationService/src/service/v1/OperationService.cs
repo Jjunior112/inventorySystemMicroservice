@@ -1,16 +1,19 @@
 
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using Contracts.Enums;
 using Microsoft.EntityFrameworkCore;
 
 public class OperationService
 {
+    private readonly HttpClient _httpClient;
     private readonly OperationDbContext _context;
     private readonly ICachingService _cache;
     private readonly ILogger _logger;
 
-    public OperationService(OperationDbContext context, ICachingService cache, ILogger<Operation> logger)
+    public OperationService(HttpClient httpClient, OperationDbContext context, ICachingService cache, ILogger<Operation> logger)
     {
+        _httpClient = httpClient;
         _context = context;
         _cache = cache;
         _logger = logger;
@@ -18,32 +21,17 @@ public class OperationService
 
     public async Task<PagedResult<Operation>> GetOperations(int pageNumber, int pageSize)
     {
-        string cacheKey = $"operations:page:{pageNumber}:size:{pageSize}";
-
-        var cachedResult = await _cache.GetAsync<PagedResult<Operation>>(cacheKey);
-        if (cachedResult != null)
-        {
-            _logger.LogInformation("Operações carregadas do cache!");
-
-            return cachedResult;
-        }
-
-        _logger.LogInformation("buscando operações no banco...");
 
         var totalCounts = await _context.Operations.CountAsync();
 
         var operations = await _context.Operations.Skip((pageNumber - 1) * pageSize).Take(pageSize).OrderBy(p => p.OperationAt).ToListAsync();
 
-        var result = new PagedResult<Operation>
+        return new PagedResult<Operation>
         {
             Items = operations,
             Page = pageNumber,
             PageSize = pageSize
         };
-
-        await _cache.SetAsync(cacheKey, result, TimeSpan.FromMinutes(5));
-
-        return result;
 
     }
 
@@ -72,12 +60,16 @@ public class OperationService
         return operation;
     }
 
-    public async Task AddOperation(Operation operation)
+    public async Task AddOperation(Guid productId, string productName, int operationQuantity, OperationType operationType)
     {
+
+        var operation = new Operation(productId, productName, operationQuantity, operationType);
 
         _context.Add(operation);
 
         await _context.SaveChangesAsync();
+
+
     }
 
 }

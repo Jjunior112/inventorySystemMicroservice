@@ -31,7 +31,7 @@ const AddOperationForm = () => {
     setLoading(true);
 
     try {
-      const response = await fetch(`http://localhost:9000/v1/operations`, {
+      const response = await fetch(`http://localhost:9000/v1/stocks`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
