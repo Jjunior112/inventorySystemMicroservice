@@ -30,28 +30,26 @@ public class StockController : ControllerBase
 
 
     [HttpPost]
-    public async Task<IActionResult> Post( [FromBody] UpdateStockRequest request)
+    public async Task<IActionResult> Post([FromBody] UpdateStockRequest request)
     {
 
         var updateStock = await _stockService.UpdateStock(request);
 
-        if (updateStock != null)
+        if (updateStock == null) return BadRequest();
+
+        await _publishEndPoint.Publish<IOperationCreated>(new
         {
-
-            await _publishEndPoint.Publish<IOperationCreated>(new
-            {
-                ProductId = request.productId,
-                updateStock.ProductName,
-                OperationType = request.operationType,
-                Quantity = request.operationQuantity
-            },
-            CancellationToken.None
-            );
+            ProductId = request.productId,
+            updateStock.ProductName,
+            OperationType = request.operationType,
+            Quantity = request.operationQuantity
+        },
+          CancellationToken.None
+          );
 
 
-            return Ok($"{updateStock.ProductName} atualizado com sucesso!");
-        }
-        return BadRequest();
+        return Ok();
+
     }
 
     [HttpDelete("{id}")]

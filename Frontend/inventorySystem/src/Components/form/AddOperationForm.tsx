@@ -43,13 +43,16 @@ const AddOperationForm = () => {
           operationType
         })
       });
-
-      if (response.status !== 201 || operationType === '') {
+      
+      if (!response.ok) {
         throw new Error('Produto não encontrado ou erro ao criar operação!');
-      } else {
-        alert('Operação efetuada com sucesso!');
-        navigate('/products');
-      }
+
+      } 
+      
+      alert('Operação efetuada com sucesso!');
+      setTimeout(() => navigate('/products'), 500);
+
+
     } catch (error: unknown) {
       if (error instanceof Error) {
         console.log(error.message);

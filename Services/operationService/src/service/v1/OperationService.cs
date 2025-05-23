@@ -6,14 +6,12 @@ using Microsoft.EntityFrameworkCore;
 
 public class OperationService
 {
-    private readonly HttpClient _httpClient;
     private readonly OperationDbContext _context;
     private readonly ICachingService _cache;
     private readonly ILogger _logger;
 
-    public OperationService(HttpClient httpClient, OperationDbContext context, ICachingService cache, ILogger<Operation> logger)
+    public OperationService( OperationDbContext context, ICachingService cache, ILogger<Operation> logger)
     {
-        _httpClient = httpClient;
         _context = context;
         _cache = cache;
         _logger = logger;

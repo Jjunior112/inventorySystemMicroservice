@@ -75,15 +75,15 @@ builder.Services.AddStackExchangeRedisCache(o =>
 
 builder.Services.AddScoped<OperationService>();
 
+
+
+//Controllers
+
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
     {
         options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
     });
-
-//Controllers
-
-builder.Services.AddControllers();
 
 
 
@@ -110,9 +110,6 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-// Habilita CORS antes do MapControllers
-
-app.UseCors("AllowFrontend");
 
 app.MapControllers();
 
