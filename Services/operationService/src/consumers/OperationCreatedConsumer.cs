@@ -3,12 +3,12 @@ using MassTransit;
 
 public class OperationCreatedConsumer : IConsumer<IOperationCreated>
 {
-    private readonly StockService _stockService;
+    private readonly OperationService _operationService;
     private readonly ILogger<OperationCreatedConsumer> _logger;
 
-    public OperationCreatedConsumer(StockService stockService, ILogger<OperationCreatedConsumer> logger)
+    public OperationCreatedConsumer(OperationService operationService, ILogger<OperationCreatedConsumer> logger)
     {
-        _stockService = stockService;
+        _operationService = operationService;
         _logger = logger;
     }
 
@@ -16,8 +16,7 @@ public class OperationCreatedConsumer : IConsumer<IOperationCreated>
     {
         var message = context.Message;
 
-        await _stockService.UpdateStock(message.ProductId, message.OperationType, message.Quantity);
-
+        await _operationService.AddOperation(message.ProductId, message.ProductName, message.Quantity, message.OperationType);
 
     }
 

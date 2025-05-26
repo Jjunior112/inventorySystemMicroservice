@@ -8,6 +8,8 @@ public class Product
 
     public DateTime CreatedAt { get; set; }
 
+    public bool IsActive { get; set; } = true;
+
     public Product(string productName, string productCategory)
     {
         ProductId = Guid.NewGuid();

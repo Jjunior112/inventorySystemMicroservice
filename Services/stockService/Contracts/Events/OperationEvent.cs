@@ -6,10 +6,10 @@ namespace Contracts.Events
     {
         Guid ProductId { get; }
 
+        string ProductName { get; }
+
         OperationType OperationType { get; }
 
         int Quantity { get; }
-
-
     }
 }

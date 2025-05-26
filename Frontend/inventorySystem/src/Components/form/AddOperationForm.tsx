@@ -31,7 +31,7 @@ const AddOperationForm = () => {
     setLoading(true);
 
     try {
-      const response = await fetch(`http://localhost:9000/v1/operations`, {
+      const response = await fetch(`http://localhost:9000/v1/stocks`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -43,13 +43,16 @@ const AddOperationForm = () => {
           operationType
         })
       });
-
-      if (response.status !== 201 || operationType === '') {
+      
+      if (!response.ok) {
         throw new Error('Produto não encontrado ou erro ao criar operação!');
-      } else {
-        alert('Operação efetuada com sucesso!');
-        navigate('/products');
-      }
+
+      } 
+      
+      alert('Operação efetuada com sucesso!');
+      setTimeout(() => navigate('/products'), 500);
+
+
     } catch (error: unknown) {
       if (error instanceof Error) {
         console.log(error.message);

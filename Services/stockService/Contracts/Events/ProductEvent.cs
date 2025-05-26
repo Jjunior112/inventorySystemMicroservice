@@ -7,5 +7,10 @@ namespace Contracts.Events
         string ProductCategory { get; }
 
         DateTime CreatedAt { get; }
+
+        bool IsActive { get; }
     }
+
+
+
 }

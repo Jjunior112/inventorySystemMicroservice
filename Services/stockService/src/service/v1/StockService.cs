@@ -1,6 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using Contracts.Enums;
 using System.Text.Json;
+using MassTransit;
+using Contracts.Events;
 
 
 public class StockService
@@ -8,18 +10,22 @@ public class StockService
     private readonly StockDbContext _context;
 
     private readonly ICachingService _cache;
+
+    private readonly IPublishEndpoint _publishEndPoint;
     private readonly ILogger _logger;
 
 
-    public StockService(StockDbContext context, ICachingService cache, ILogger<Stock> logger)
+    public StockService(StockDbContext context, ICachingService cache, IPublishEndpoint publishEndpoint, ILogger<Stock> logger)
     {
         _context = context;
         _logger = logger;
         _cache = cache;
+        _publishEndPoint = publishEndpoint;
     }
 
     public async Task<PagedResult<Stock>> GetStocks(int pageNumber, int pageSize)
     {
+
         var totalCounts = await _context.Stocks.CountAsync();
 
         var stocks = await _context.Stocks.ToListAsync();
@@ -30,6 +36,7 @@ public class StockService
             Page = pageNumber,
             PageSize = pageSize
         };
+
 
     }
 
@@ -60,10 +67,10 @@ public class StockService
         return stock;
     }
 
-    public async Task AddStock(Guid productId, string productName, string productCategory, DateTime createdAt)
+    public async Task AddStock(Guid productId, string productName, string productCategory, DateTime createdAt, bool isActive)
     {
 
-        var stock = new Stock(productId, productName, productCategory, createdAt);
+        var stock = new Stock(productId, productName, productCategory, createdAt, isActive);
 
 
         _context.Stocks.Add(stock);
@@ -71,24 +78,24 @@ public class StockService
         await _context.SaveChangesAsync();
     }
 
-    public async Task<Stock?> UpdateStock(Guid id, OperationType operationType, int productQuantity)
+    public async Task<Stock?> UpdateStock(UpdateStockRequest request)
     {
-        var stock = await _context.Stocks.FirstOrDefaultAsync(s => s.ProductId == id);
+        var stock = await _context.Stocks.FirstOrDefaultAsync(s => s.ProductId == request.productId);
 
         if (stock == null) return null;
 
-        switch (operationType)
+        switch (request.operationType)
         {
             case OperationType.StockOut:
 
-                if (productQuantity <= 0)
+                if (request.operationQuantity <= 0 || !stock.IsActive)
                 {
                     return null;
                 }
 
-                if (productQuantity <= stock.ProductQuantity)
+                if (request.operationQuantity <= stock.ProductQuantity)
                 {
-                    stock.ProductQuantity -= productQuantity;
+                    stock.ProductQuantity -= request.operationQuantity;
                 }
                 else
                 {
@@ -98,15 +105,25 @@ public class StockService
                 break;
 
             case OperationType.StockIn:
-                if (productQuantity <= 0)
+                if (request.operationQuantity <= 0)
                 {
                     return null;
                 }
-                stock.ProductQuantity += productQuantity;
+                stock.ProductQuantity += request.operationQuantity;
                 break;
         }
 
         _context.Update(stock);
+
+        await _publishEndPoint.Publish<IOperationCreated>(new
+        {
+            ProductId = request.productId,
+            ProductName = stock.ProductName,
+            OperationType = request.operationType,
+            Quantity = request.operationQuantity
+        },
+         CancellationToken.None
+         );
 
         await _context.SaveChangesAsync();
 
@@ -122,8 +139,10 @@ public class StockService
 
         if (stock.ProductQuantity > 0) return false;
 
-        _context.Stocks.Remove(stock);
-        
+        stock.IsActive = false;
+
+        _context.Stocks.Update(stock);
+
         await _cache.DeleteAsync(id.ToString());
 
         await _context.SaveChangesAsync();

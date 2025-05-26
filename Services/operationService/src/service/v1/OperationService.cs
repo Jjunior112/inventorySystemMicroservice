@@ -1,6 +1,7 @@
 
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using Contracts.Enums;
 using Microsoft.EntityFrameworkCore;
 
 public class OperationService
@@ -9,7 +10,7 @@ public class OperationService
     private readonly ICachingService _cache;
     private readonly ILogger _logger;
 
-    public OperationService(OperationDbContext context, ICachingService cache, ILogger<Operation> logger)
+    public OperationService( OperationDbContext context, ICachingService cache, ILogger<Operation> logger)
     {
         _context = context;
         _cache = cache;
@@ -18,6 +19,7 @@ public class OperationService
 
     public async Task<PagedResult<Operation>> GetOperations(int pageNumber, int pageSize)
     {
+
         var totalCounts = await _context.Operations.CountAsync();
 
         var operations = await _context.Operations.Skip((pageNumber - 1) * pageSize).Take(pageSize).OrderBy(p => p.OperationAt).ToListAsync();
@@ -29,8 +31,6 @@ public class OperationService
             PageSize = pageSize
         };
 
-
-
     }
 
     public async Task<Operation?> GetOperationById(Guid id)
@@ -41,7 +41,7 @@ public class OperationService
 
         if (!string.IsNullOrWhiteSpace(operationCache))
         {
-              _logger.LogInformation("Operação {OperationId} carregada do cache.", id);
+            _logger.LogInformation("Operação {OperationId} carregada do cache.", id);
 
             operation = JsonSerializer.Deserialize<Operation>(operationCache);
 
@@ -58,12 +58,16 @@ public class OperationService
         return operation;
     }
 
-    public async Task AddOperation(Operation operation)
+    public async Task AddOperation(Guid productId, string productName, int operationQuantity, OperationType operationType)
     {
+
+        var operation = new Operation(productId, productName, operationQuantity, operationType);
 
         _context.Add(operation);
 
         await _context.SaveChangesAsync();
+
+
     }
 
 }

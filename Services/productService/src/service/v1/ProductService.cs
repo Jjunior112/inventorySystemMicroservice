@@ -1,5 +1,7 @@
 
 using System.Text.Json;
+using Contracts.Events;
+using MassTransit;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.IdentityModel.Tokens;
@@ -7,16 +9,21 @@ using Microsoft.IdentityModel.Tokens;
 public class ProductService
 {
 
+
     private readonly ProductDbContext _context;
     private readonly ICachingService _cache;
 
+    private readonly IPublishEndpoint _publishEndPoint;
+
+
     private readonly ILogger _logger;
 
-    public ProductService(ProductDbContext context, ICachingService cache, ILogger<Product> logger)
+    public ProductService(ProductDbContext context, ICachingService cache, IPublishEndpoint publishEndPoint, ILogger<Product> logger)
     {
         _context = context;
         _cache = cache;
         _logger = logger;
+        _publishEndPoint = publishEndPoint;
 
     }
 
@@ -34,7 +41,6 @@ public class ProductService
             Page = pageNumber,
             PageSize = pageSize
         };
-
     }
 
     public async Task<Product?> GetProductById(Guid id)
@@ -64,11 +70,31 @@ public class ProductService
         return product;
     }
 
-    public async Task AddProducts(Product product)
+    public async Task<Product?> AddProducts(AddProductRequest request)
     {
-        _context.Add(product);
+        var productVerify = await _context.Products.Where(p => p.ProductName.ToLower() == request.productName.ToLower()).FirstOrDefaultAsync();
 
-        await _context.SaveChangesAsync();
+        if (productVerify == null)
+        {
+
+            var product = new Product(request.productName, request.productCategory);
+
+            _context.Add(product);
+
+            await _publishEndPoint.Publish<IProductCreated>(new
+            {
+                product.ProductId,
+                product.ProductName,
+                product.ProductCategory,
+                product.CreatedAt,
+                product.IsActive
+            }, CancellationToken.None);
+
+            await _context.SaveChangesAsync();
+
+            return product;
+        }
+        return null;
     }
 
     public async Task<Product?> UpdateProduct(Guid id, UpdateProductRequest request)
@@ -102,8 +128,17 @@ public class ProductService
         {
             await _cache.DeleteAsync(cacheKey);
         }
+        product.IsActive = false;
 
-        _context.Products.Remove(product);
+        _context.Products.Update(product);
+
+        await _publishEndPoint.Publish<IProductCreated>(new
+        {
+            product.ProductId,
+            product.ProductName,
+            product.ProductCategory,
+            product.CreatedAt
+        }, CancellationToken.None);
 
         await _context.SaveChangesAsync();
 

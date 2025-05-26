@@ -10,18 +10,6 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 
-//CORS
-
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("AllowFrontend", policy =>
-    {
-        policy.WithOrigins("http://localhost:5173")
-              .AllowAnyHeader()
-              .AllowAnyMethod();
-    });
-});
-
 //Swagger
 
 builder.Services.AddEndpointsApiExplorer();
@@ -53,7 +41,6 @@ builder.Services.AddApiVersioning(options =>
 builder.Services.AddMassTransit(x =>
 {
     x.AddConsumer<ProductCreatedConsumer>();
-    x.AddConsumer<OperationCreatedConsumer>();
 
     x.UsingRabbitMq((context, cfg) =>
     {
@@ -68,10 +55,6 @@ builder.Services.AddMassTransit(x =>
         e.ConfigureConsumer<ProductCreatedConsumer>(context);
     });
 
-        cfg.ReceiveEndpoint("operation-created-queue", e =>
-        {
-            e.ConfigureConsumer<OperationCreatedConsumer>(context);
-        });
 
     });
 });
@@ -91,15 +74,15 @@ builder.Services.AddStackExchangeRedisCache(o =>
 
 builder.Services.AddScoped<StockService>();
 
+
+//Controllers
+
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
     {
         options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
     });
 
-//Controllers
-
-builder.Services.AddControllers();
 
 var app = builder.Build();
 
@@ -120,9 +103,6 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-// Habilita CORS antes do MapControllers
-
-app.UseCors("AllowFrontend");
 
 app.MapControllers();
 

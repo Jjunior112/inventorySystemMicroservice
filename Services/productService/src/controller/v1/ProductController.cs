@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Mvc;
-using Contracts.Events;
 using MassTransit;
 
 [ApiVersion("1.0")]
@@ -9,12 +8,10 @@ public class ProductController : ControllerBase
 {
 
     private readonly ProductService _productService;
-    private readonly IPublishEndpoint _publishEndPoint;
-
-    public ProductController(ProductService productService, IPublishEndpoint publishEndPoint)
+    public ProductController(ProductService productService)
     {
         _productService = productService;
-        _publishEndPoint = publishEndPoint;
+
     }
 
     [HttpGet()]
@@ -38,19 +35,13 @@ public class ProductController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> AddProduct(AddProductRequest request)
     {
-        var product = new Product(request.productName, request.productCategory);
 
-        await _productService.AddProducts(product);
+        var product = await _productService.AddProducts(request);
 
-        await _publishEndPoint.Publish<IProductCreated>(new
-        {
-            product.ProductId,
-            product.ProductName,
-            product.ProductCategory,
-            product.CreatedAt
-        }, CancellationToken.None);
+        if (product != null) return CreatedAtAction(nameof(GetProductById), new { id = product.ProductId }, product);
 
-        return CreatedAtAction(nameof(GetProductById), new { id = product.ProductId }, product);
+
+        return BadRequest();
 
     }
     [HttpPatch("{id}")]
@@ -67,7 +58,15 @@ public class ProductController : ControllerBase
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteProduct(Guid id)
     {
-        return await _productService.Delete(id) ? NoContent() : NotFound();
-    }
+        var product = await _productService.GetProductById(id);
 
+        if (product != null)
+        {
+            var productDeleted = await _productService.Delete(product.ProductId);
+
+            if (productDeleted) return NoContent();
+
+        }
+        return NotFound();
+    }
 }
