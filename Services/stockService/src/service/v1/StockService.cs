@@ -1,6 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using Contracts.Enums;
 using System.Text.Json;
+using MassTransit;
+using Contracts.Events;
 
 
 public class StockService
@@ -8,14 +10,17 @@ public class StockService
     private readonly StockDbContext _context;
 
     private readonly ICachingService _cache;
+
+    private readonly IPublishEndpoint _publishEndPoint;
     private readonly ILogger _logger;
 
 
-    public StockService(StockDbContext context, ICachingService cache, ILogger<Stock> logger)
+    public StockService(StockDbContext context, ICachingService cache, IPublishEndpoint publishEndpoint, ILogger<Stock> logger)
     {
         _context = context;
         _logger = logger;
         _cache = cache;
+        _publishEndPoint = publishEndpoint;
     }
 
     public async Task<PagedResult<Stock>> GetStocks(int pageNumber, int pageSize)
@@ -109,6 +114,16 @@ public class StockService
         }
 
         _context.Update(stock);
+
+        await _publishEndPoint.Publish<IOperationCreated>(new
+        {
+            ProductId = request.productId,
+            ProductName = stock.ProductName,
+            OperationType = request.operationType,
+            Quantity = request.operationQuantity
+        },
+         CancellationToken.None
+         );
 
         await _context.SaveChangesAsync();
 

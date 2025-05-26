@@ -1,5 +1,7 @@
 
 using System.Text.Json;
+using Contracts.Events;
+using MassTransit;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.IdentityModel.Tokens;
@@ -7,16 +9,21 @@ using Microsoft.IdentityModel.Tokens;
 public class ProductService
 {
 
+
     private readonly ProductDbContext _context;
     private readonly ICachingService _cache;
 
+    private readonly IPublishEndpoint _publishEndPoint;
+
+
     private readonly ILogger _logger;
 
-    public ProductService(ProductDbContext context, ICachingService cache, ILogger<Product> logger)
+    public ProductService(ProductDbContext context, ICachingService cache, IPublishEndpoint publishEndPoint, ILogger<Product> logger)
     {
         _context = context;
         _cache = cache;
         _logger = logger;
+        _publishEndPoint = publishEndPoint;
 
     }
 
@@ -74,6 +81,15 @@ public class ProductService
 
             _context.Add(product);
 
+            await _publishEndPoint.Publish<IProductCreated>(new
+            {
+                product.ProductId,
+                product.ProductName,
+                product.ProductCategory,
+                product.CreatedAt,
+                product.IsActive
+            }, CancellationToken.None);
+
             await _context.SaveChangesAsync();
 
             return product;
@@ -115,6 +131,14 @@ public class ProductService
         product.IsActive = false;
 
         _context.Products.Update(product);
+
+        await _publishEndPoint.Publish<IProductCreated>(new
+        {
+            product.ProductId,
+            product.ProductName,
+            product.ProductCategory,
+            product.CreatedAt
+        }, CancellationToken.None);
 
         await _context.SaveChangesAsync();
 

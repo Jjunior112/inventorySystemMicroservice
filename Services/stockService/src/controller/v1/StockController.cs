@@ -9,13 +9,13 @@ using Microsoft.AspNetCore.Mvc;
 public class StockController : ControllerBase
 {
     private readonly StockService _stockService;
-    private readonly IPublishEndpoint _publishEndPoint;
+   
 
 
-    public StockController(StockService stockService, IPublishEndpoint publishEndpoint)
+    public StockController(StockService stockService)
     {
         _stockService = stockService;
-        _publishEndPoint = publishEndpoint;
+       
     }
     [HttpGet]
     public async Task<IActionResult> GetStocks([FromQuery] int pageNumber, [FromQuery] int pageSize)
@@ -36,17 +36,6 @@ public class StockController : ControllerBase
         var updateStock = await _stockService.UpdateStock(request);
 
         if (updateStock == null) return BadRequest();
-
-        await _publishEndPoint.Publish<IOperationCreated>(new
-        {
-            ProductId = request.productId,
-            updateStock.ProductName,
-            OperationType = request.operationType,
-            Quantity = request.operationQuantity
-        },
-          CancellationToken.None
-          );
-
 
         return Ok();
 
