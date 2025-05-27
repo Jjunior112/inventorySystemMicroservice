@@ -20,7 +20,7 @@ public class Operation
         ProductName = productName;
         OperationQuantity = operationQuantity;
         OperationType = operationType;
-        OperationAt = DateTime.Now;
+        OperationAt = DateTime.UtcNow;
 
     }
 }
