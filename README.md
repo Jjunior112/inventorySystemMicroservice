@@ -41,7 +41,6 @@ InventorySystem/
 │       ├── model/Product.cs
 │       ├── data/ProductDbContext.cs
 │       ├── caching/
-│       	├── ICachingService.cs
 │       	├── RedisCachingService.cs
 │       ├── service/ProductServices.cs
 │       ├── controller/ProductController.cs
@@ -51,7 +50,6 @@ InventorySystem/
 │       ├── model/Operation.cs
 │       ├── data/OperationDbContext.cs
 │       ├── caching/
-│       	├── ICachingService.cs
 │       	├── RedisCachingService.cs
 │       ├── service/OperationServices.cs
 │       ├── controller/OperationController.cs
@@ -64,7 +62,6 @@ InventorySystem/
 │       ├── model/Stock.cs
 │       ├── data/StockDbContext.cs
 │       ├── caching/
-│       	├── ICachingService.cs
 │       	├── RedisCachingService.cs
 │       ├── service/StockServices.cs
 │       ├── controller/StockController.cs
