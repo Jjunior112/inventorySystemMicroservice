@@ -196,7 +196,7 @@ FRONTEND_PORT = 3000
         "productId": "acc51146-8873-4cff-ac5f-ab854a75c13b",
         "productName":"Sample Product",
         "operationQuantity": 150,
-        "operationType": 1,
+        "operationType": StockIn,
         "operationAt": "2025-04-19T03:34:25.9385576+00:00"
       }
     ]
@@ -211,22 +211,10 @@ FRONTEND_PORT = 3000
       "productId": "acc51146-8873-4cff-ac5f-ab854a75c13b",
       "productName":"Sample Product",
       "operationQuantity": 150,
-      "operationType": 1,
+      "operationType": StockIn,
       "operationAt": "2025-04-19T03:34:25.9385576+00:00"
     }
-    ```
-
-- **POST /operations**
-  - Cria uma nova operação.
-  - **Exemplo de corpo de requisição:**
-    ```json
-    {
-      "productId": "acc51146-8873-4cff-ac5f-ab854a75c13b",
-      "productName":"Sample Product",
-      "operationQuantity": 150,
-      "operationType": 1
-    }
-    ```
+    
 
 ### Estoques
 
@@ -259,6 +247,19 @@ FRONTEND_PORT = 3000
         "productQuantity": 150
     }
     ```
+    ```
+
+- **POST /stocks**
+  - atualiza o estoque e cria uma nova operação.
+  - **Exemplo de corpo de requisição:**
+    ```json
+    {
+      "productId": "acc51146-8873-4cff-ac5f-ab854a75c13b",
+      "productName":"Sample Product",
+      "operationQuantity": 150,
+      "operationType": StockIn
+    }
+    ```
 
 ## 📨 Comunicação Assíncrona com RabbitMQ
 
@@ -266,11 +267,11 @@ Este sistema utiliza o RabbitMQ para orquestrar eventos entre microsserviços. O
 
 ### Eventos Publicados:
 - `ProductCreatedEvent` pelo `ProductService`
-- `OperationCreatedEvent` pelo `OperationService`
+- `OperationCreatedEvent` no `StockService`
 
 ### Eventos Consumidos:
 - `ProductCreatedEvent` no `StockService`
-- `OperationCreatedEvent` no `StockService`
+- `OperationCreatedEvent` pelo `OperationService`
 
 RabbitMQ está configurado no `docker-compose.yml` e pode ser acessado em `http://localhost:15672` com login `guest` / `guest`.
 
