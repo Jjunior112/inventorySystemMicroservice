@@ -193,7 +193,7 @@ FRONTEND_PORT = 3000
         "productId": "acc51146-8873-4cff-ac5f-ab854a75c13b",
         "productName":"Sample Product",
         "operationQuantity": 150,
-        "operationType": StockIn,
+        "operationType": "StockIn",
         "operationAt": "2025-04-19T03:34:25.9385576+00:00"
       }
     ]
@@ -208,7 +208,7 @@ FRONTEND_PORT = 3000
       "productId": "acc51146-8873-4cff-ac5f-ab854a75c13b",
       "productName":"Sample Product",
       "operationQuantity": 150,
-      "operationType": StockIn,
+      "operationType": "StockIn",
       "operationAt": "2025-04-19T03:34:25.9385576+00:00"
     }
     
@@ -254,7 +254,7 @@ FRONTEND_PORT = 3000
       "productId": "acc51146-8873-4cff-ac5f-ab854a75c13b",
       "productName":"Sample Product",
       "operationQuantity": 150,
-      "operationType": StockIn
+      "operationType": "StockIn"
     }
     ```
 
