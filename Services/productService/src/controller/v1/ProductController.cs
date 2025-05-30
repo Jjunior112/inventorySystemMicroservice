@@ -1,6 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
 using MassTransit;
+using Microsoft.AspNetCore.Authorization;
 
+
+[Authorize]
 [ApiVersion("1.0")]
 [ApiController]
 [Route("api/v{version:apiVersion}/products")]

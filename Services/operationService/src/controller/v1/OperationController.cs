@@ -2,7 +2,10 @@
 using MassTransit;
 using Microsoft.AspNetCore.Mvc;
 using Contracts.Events;
+using Microsoft.AspNetCore.Authorization;
 
+
+[Authorize]
 [ApiVersion("1.0")]
 [ApiController]
 [Route("api/v{version:apiVersion}/operations")]

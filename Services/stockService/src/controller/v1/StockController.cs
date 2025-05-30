@@ -2,20 +2,23 @@
 using Contracts.Events;
 using MassTransit;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
+
+[Authorize]
 [ApiVersion("1.0")]
 [ApiController]
 [Route("api/v{version:apiVersion}/stocks")]
 public class StockController : ControllerBase
 {
     private readonly StockService _stockService;
-   
+
 
 
     public StockController(StockService stockService)
     {
         _stockService = stockService;
-       
+
     }
     [HttpGet]
     public async Task<IActionResult> GetStocks([FromQuery] int pageNumber, [FromQuery] int pageSize)

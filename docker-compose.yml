@@ -1,4 +1,3 @@
-
 services:
 
   rabbitmq:
@@ -10,6 +9,7 @@ services:
     ports:
       - "5672:5672"
       - "15672:15672"
+    restart: unless-stopped
     networks:
       - backend
   redis:
@@ -17,31 +17,32 @@ services:
     container_name: redis
     ports:
       - "6379:6379"
+    restart: unless-stopped
     networks:
       - backend
-  usersDb:
+  authDb:
     image: mcr.microsoft.com/mssql/server:2019-latest
     environment:
-      SA_PASSWORD: ${SA_PASSWORD_USER}
+      SA_PASSWORD: ${SA_PASSWORD_AUTH}
       ACCEPT_EULA: Y
-    container_name: usersDb
+    container_name: authDb
     ports:
-      - "${USER_DB_PORT}:1433"
+      - "${AUTH_DB_PORT}:1433"
     networks:
       - backend
 
-  userservice:
+  authservice:
     build:
       context: .
-      dockerfile: Services/userService/Dockerfile
-    container_name: userservice
+      dockerfile: Services/authService/Dockerfile
+    container_name: authservice
     ports:
-      - "${USER_SERVICE_PORT}:8080"
+      - "${AUTH_SERVICE_PORT}:8080"
     networks:
       - backend
     depends_on:
-      - usersDb
-    restart: unless-stopped  
+      - authDb
+    restart: unless-stopped
 
   productsDb:
     image: mcr.microsoft.com/mssql/server:2019-latest
@@ -55,7 +56,7 @@ services:
       - backend
 
   productservice:
-    build: 
+    build:
       context: .
       dockerfile: ./Services/productService/Dockerfile
     container_name: productservice
@@ -86,6 +87,7 @@ services:
     container_name: operationsservice
     ports:
       - "${OPERATIONS_SERVICE_PORT}:8080"
+    restart: unless-stopped
     networks:
       - backend
     depends_on:
@@ -105,8 +107,8 @@ services:
 
   stocksservice:
     build:
-        context: .
-        dockerfile: ./Services/stockService/Dockerfile
+      context: .
+      dockerfile: ./Services/stockService/Dockerfile
     container_name: stocksservice
     ports:
       - "${STOCK_SERVICE_PORT}:8080"
@@ -119,18 +121,22 @@ services:
 
   apigateway:
     build:
-        context: .
-        dockerfile: ./Gateway/apiGateway/Dockerfile
+      context: .
+      dockerfile: ./Gateway/apiGateway/Dockerfile
     container_name: apigateway
     ports:
 
       - "${API_GATEWAY_PORT}:8080"
+    environment:
+
+      - AUTH_AUTHORITY=http://authservice:8080
 
     depends_on:
       - productservice
       - operationsservice
       - stocksservice
-      - userservice
+      - authservice
+
     restart: unless-stopped
     networks:
       - backend

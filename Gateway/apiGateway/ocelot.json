@@ -16,7 +16,11 @@
         "PUT",
         "DELETE",
         "OPTIONS"
-      ]
+      ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer",
+        "AllowedScopes": []
+      }
     },
     {
       "DownstreamPathTemplate": "/api/v1/operations/{everything}",
@@ -34,7 +38,11 @@
         "PUT",
         "DELETE",
         "OPTIONS"
-      ]
+      ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer",
+        "AllowedScopes": []
+      }
     },
     {
       "DownstreamPathTemplate": "/api/v1/stocks/{everything}",
@@ -52,18 +60,22 @@
         "PUT",
         "DELETE",
         "OPTIONS"
-      ]
+      ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer",
+        "AllowedScopes": []
+      }
     },
-    {
-      "DownstreamPathTemplate": "/api/v1/users/{everything}",
+     {
+      "DownstreamPathTemplate": "/{everything}",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "userservice",
+          "Host": "authservice",
           "Port": 8080
         }
       ],
-      "UpstreamPathTemplate": "/v1/users/{everything}",
+      "UpstreamPathTemplate": "/v1/auth/{everything}",
       "UpstreamHttpMethod": [
         "GET",
         "POST",

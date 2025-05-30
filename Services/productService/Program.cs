@@ -2,21 +2,16 @@ using Microsoft.EntityFrameworkCore;
 using MassTransit;
 using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.AspNetCore.Mvc;
-
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-
-//Swagger
-
+// Swagger
 builder.Services.AddEndpointsApiExplorer();
-
 builder.Services.AddSwaggerGen();
 
-//DbContext
-
+// DbContext
 builder.Services.AddDbContext<ProductDbContext>(options =>
 {
     var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
@@ -24,8 +19,7 @@ builder.Services.AddDbContext<ProductDbContext>(options =>
     options.LogTo(Console.WriteLine, LogLevel.Information);
 });
 
-//Versionamento
-
+// Versionamento
 builder.Services.AddApiVersioning(options =>
 {
     options.ReportApiVersions = true;
@@ -34,8 +28,26 @@ builder.Services.AddApiVersioning(options =>
     options.ApiVersionReader = new UrlSegmentApiVersionReader();
 });
 
-//Mass Transit
+// Autenticação JWT
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.Authority = builder.Configuration["Authentication:Authority"];
+        options.RequireHttpsMetadata = false;
+        options.Audience = builder.Configuration["Authentication:Audience"];
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateAudience = true,
+            ValidateIssuer = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true
 
+        };
+    });
+
+builder.Services.AddAuthorization();
+
+// MassTransit
 builder.Services.AddMassTransit(x =>
 {
     x.UsingRabbitMq((ctx, cfg) =>
@@ -48,8 +60,7 @@ builder.Services.AddMassTransit(x =>
     });
 });
 
-//Cache
-
+// Cache Redis
 builder.Services.AddScoped<ICachingService, RedisCachingService>();
 
 builder.Services.AddStackExchangeRedisCache(o =>
@@ -58,27 +69,22 @@ builder.Services.AddStackExchangeRedisCache(o =>
     o.Configuration = "redis:6379";
 });
 
-//Application Services
-
-
+// Serviços de aplicação
 builder.Services.AddScoped<ProductService>();
 
-//Controllers
-
+// Controllers
 builder.Services.AddControllers();
-
 
 var app = builder.Build();
 
-
-
+// Aplica migrações
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<ProductDbContext>();
     db.Database.Migrate();
 }
 
-// Configure the HTTP request pipeline.
+// Middleware pipeline
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -87,8 +93,9 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();  // <-- Middleware de autenticação
+app.UseAuthorization();   // <-- Middleware de autorização
+
 app.MapControllers();
 
-
 app.Run();
-

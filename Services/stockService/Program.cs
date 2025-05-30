@@ -3,21 +3,16 @@ using System.Text.Json.Serialization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.AspNetCore.Mvc;
-
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-
-//Swagger
-
+// Swagger
 builder.Services.AddEndpointsApiExplorer();
-
 builder.Services.AddSwaggerGen();
 
-//DbContext
-
+// DbContext
 builder.Services.AddDbContext<StockDbContext>(options =>
 {
     var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
@@ -25,9 +20,7 @@ builder.Services.AddDbContext<StockDbContext>(options =>
     options.LogTo(Console.WriteLine, LogLevel.Information);
 });
 
-//Versionamento
-
-
+// Versionamento
 builder.Services.AddApiVersioning(options =>
 {
     options.ReportApiVersions = true;
@@ -36,8 +29,24 @@ builder.Services.AddApiVersioning(options =>
     options.ApiVersionReader = new UrlSegmentApiVersionReader();
 });
 
-//Mass Transit
+// Autenticação JWT
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.Authority = builder.Configuration["Authentication:Authority"];  // Exemplo: http://authservice:8080
+        options.RequireHttpsMetadata = false; // Ajustar para true em produção
+        options.Audience = builder.Configuration["Authentication:Audience"];   // Exemplo: "stocksservice"
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateAudience = true,
+            ValidateIssuer = true,
+            // Outras validações, se necessário
+        };
+    });
 
+builder.Services.AddAuthorization();
+
+// MassTransit
 builder.Services.AddMassTransit(x =>
 {
     x.AddConsumer<ProductCreatedConsumer>();
@@ -51,16 +60,13 @@ builder.Services.AddMassTransit(x =>
         });
 
         cfg.ReceiveEndpoint("product-created-queue", e =>
-    {
-        e.ConfigureConsumer<ProductCreatedConsumer>(context);
-    });
-
-
+        {
+            e.ConfigureConsumer<ProductCreatedConsumer>(context);
+        });
     });
 });
 
-//Cache
-
+// Cache Redis
 builder.Services.AddScoped<ICachingService, RedisCachingService>();
 
 builder.Services.AddStackExchangeRedisCache(o =>
@@ -69,24 +75,17 @@ builder.Services.AddStackExchangeRedisCache(o =>
     o.Configuration = "redis:6379";
 });
 
-
-//Application Services
-
+// Serviços da aplicação
 builder.Services.AddScoped<StockService>();
 
-
-//Controllers
-
+// Controllers
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
     {
         options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
     });
 
-
 var app = builder.Build();
-
-
 
 using (var scope = app.Services.CreateScope())
 {
@@ -94,7 +93,7 @@ using (var scope = app.Services.CreateScope())
     db.Database.Migrate();
 }
 
-// Configure the HTTP request pipeline.
+// Pipeline HTTP
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -103,6 +102,8 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();  // <-- Middleware de autenticação
+app.UseAuthorization();   // <-- Middleware de autorização
 
 app.MapControllers();
 
